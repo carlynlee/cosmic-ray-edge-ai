@@ -1,0 +1,75 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: credo-image-clustering-cpu
+  namespace: cblee-credo
+  labels:
+    app: credo-image-clustering-cpu
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: credo-image-clustering-cpu
+  template:
+    metadata:
+      labels:
+        app: credo-image-clustering-cpu
+    spec:
+      containers:
+      - name: credo-container
+        image: gitlab-registry.nrp-nautilus.io/cloud-ai-100/qaic-docker-images:vllm-latest
+        resources:
+          requests:
+            cpu: "4"
+            memory: "16Gi"
+          limits:
+            cpu: "8"
+            memory: "32Gi"
+        env:
+        - name: PYTHONUNBUFFERED
+          value: "1"
+        - name: TF_CPP_MIN_LOG_LEVEL
+          value: "2"
+        - name: PYTHONPATH
+          value: "/workspace"
+        volumeMounts:
+        - name: code-volume
+          mountPath: /workspace
+        - name: data-volume
+          mountPath: /data
+        - name: images-volume
+          mountPath: /data/images
+        ports:
+        - containerPort: 8888
+          name: jupyter
+        - containerPort: 5000
+          name: flask
+        workingDir: /workspace
+        command: ["jupyter", "notebook", "--ip=0.0.0.0", "--port=8888", "--no-browser", "--allow-root", "--NotebookApp.token=''", "--notebook-dir=/workspace"]
+      volumes:
+      - name: code-volume
+        persistentVolumeClaim:
+          claimName: credo-pvc-cblee
+      - name: data-volume
+        persistentVolumeClaim:
+          claimName: credo-data-pvc-cblee
+      - name: images-volume
+        persistentVolumeClaim:
+          claimName: credo-images-pvc-cblee
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: credo-image-clustering-cpu-service
+  namespace: cblee-credo
+spec:
+  selector:
+    app: credo-image-clustering-cpu
+  ports:
+  - name: jupyter
+    port: 8888
+    targetPort: 8888
+  - name: flask
+    port: 5000
+    targetPort: 5000
+  type: ClusterIP 
