@@ -6,6 +6,7 @@
 **Collaborators**: University of Delaware, MIT (Cosmic Watch Muon Detectors)  
 **NRE Title**: "Real-Time Cosmic Ray Detection and Analysis Using Distributed Sensor Networks"  
 **Submission Date**: August 1, 2025  
+**Repository**: [credo-api-tools](https://github.com/carlynlee/credo-api-tools/tree/sc25-nre-submission)  
 
 ## Summary
 
@@ -211,9 +212,9 @@ VLAN: 1001 (Federated Learning)
 ## Additional Information
 
 ### Diagrams and Documentation
-- **Network Topology Diagram**: See attached `CREDO_Network_Topology.pdf`
-- **Deployment Architecture**: See attached `CREDO_Deployment_Architecture.pdf`
-- **Data Flow Diagram**: See attached `CREDO_Data_Flow.pdf`
+- **Network Topology Diagram**: [CREDO_Network_Topology.md](https://github.com/carlynlee/credo-api-tools/blob/sc25-nre-submission/CREDO_Network_Topology.md)
+- **Deployment Architecture**: [CREDO_Deployment_Architecture.md](https://github.com/carlynlee/credo-api-tools/blob/sc25-nre-submission/CREDO_Deployment_Architecture.md)
+- **Data Flow Diagram**: [CREDO_Data_Flow.md](https://github.com/carlynlee/credo-api-tools/blob/sc25-nre-submission/CREDO_Data_Flow.md)
 
 ### Contact Information
 - **Project Lead**: Carlyn Lee (cblee@caltech.edu)
@@ -221,7 +222,7 @@ VLAN: 1001 (Federated Learning)
 
 ### Special Requirements
 - **Power**: 8x C19 outlets for GPU nodes
-- **Cooling**: Adequate cooling for 8x H100 GPUs
+- **Cooling**: Adequate cooling for 8x H1Technical00 GPUs
 - **Physical Access**: 24/7 access to compute cluster
 - **Network Access**: Dedicated 100Gbps circuit with guaranteed bandwidth
 
@@ -231,6 +232,16 @@ VLAN: 1001 (Federated Learning)
 - Achieve sub-100ms latency for real-time processing
 - Demonstrate 95%+ accuracy in cosmic ray classification
 - Showcase distributed computing for scientific discovery
+
+## Document Links
+
+All SC25 NRE submission documents are available in the GitHub repository:
+
+- **[Main Requirements Document](https://github.com/carlynlee/credo-api-tools/blob/sc25-nre-submission/SC25_NRE_Network_Requirements_CREDO.md)** - This document
+- **[Network Topology](https://github.com/carlynlee/credo-api-tools/blob/sc25-nre-submission/CREDO_Network_Topology.md)** - Network architecture diagrams
+- **[Data Flow](https://github.com/carlynlee/credo-api-tools/blob/sc25-nre-submission/CREDO_Data_Flow.md)** - Data processing pipeline
+- **[Deployment Architecture](https://github.com/carlynlee/credo-api-tools/blob/sc25-nre-submission/CREDO_Deployment_Architecture.md)** - Kubernetes deployment details
+- **[Repository Home](https://github.com/carlynlee/credo-api-tools/tree/sc25-nre-submission)** - Complete project repository
 
 ---
 
