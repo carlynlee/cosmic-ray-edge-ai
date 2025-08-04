@@ -217,7 +217,7 @@ kubectl exec -n cblee-credo credo-image-clustering-cpu-7787846784-qmrqf -- pytho
 
 2. **Port Forward Issues**: Connection lost
    ```bash
-   # Restart port forward
+   # Restart port forward (if needed for web interface)
    kubectl port-forward -n cblee-credo deployment/credo-image-clustering-cpu 8888:8888
    ```
 

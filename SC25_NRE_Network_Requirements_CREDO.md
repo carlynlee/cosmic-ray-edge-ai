@@ -16,8 +16,8 @@ This NRE proposes to demonstrate a distributed cosmic ray detection network usin
 
 ### Institutional Roles
 - **Caltech**: Project coordination, SCinet deployment, and federated learning framework
-- **MIT**: Cosmic Watch detector expertise, data analysis, and machine learning contributions
-- **University of Delaware**: Cosmic Watch detector deployment, data validation, and distributed computing expertise
+- **MIT**: Cosmic Watch muon detector expertise, cosmic ray analysis, and machine learning contributions
+- **University of Delaware**: Cosmic Watch detector deployment, distributed computing expertise, and data validation
 
 ## Use Case Description
 
@@ -72,11 +72,17 @@ The SCinet Compute Cluster will serve as our central processing hub, enabling:
   - Bandwidth: 10 Gbps
   - Purpose: Real-time cosmic ray data transmission
 
-- **Sensor Node 2**: MIT/University of Delaware Space Science Lab
+- **Sensor Node 2**: MIT Cosmic Watch Lab
   - Connection: 10Gbps Ethernet
   - Protocol: Layer 3 (IPv6)
   - Bandwidth: 10 Gbps
-  - Purpose: Space weather correlation data
+  - Purpose: Muon detector and cosmic ray analysis
+
+- **Sensor Node 3**: University of Delaware
+  - Connection: 10Gbps Ethernet
+  - Protocol: Layer 3 (IPv6)
+  - Bandwidth: 10 Gbps
+  - Purpose: Distributed computing and cosmic ray detection
 
 - **Caltech Booth**: General Exhibit Area (St. Louis Convention Center)
   - Connection: 10Gbps Ethernet to SCinet cluster
@@ -84,7 +90,7 @@ The SCinet Compute Cluster will serve as our central processing hub, enabling:
   - Bandwidth: 10 Gbps
   - Purpose: Live demonstration and real-time processing
 
-- **Sensor Node 3-8**: Partner Institutions
+- **Sensor Node 4-8**: Partner Institutions
   - Connection: 1-10Gbps Ethernet (varies by institution)
   - Protocol: Layer 3 (IPv6)
   - Bandwidth: 1-10 Gbps each
@@ -123,7 +129,7 @@ The SCinet Compute Cluster will serve as our central processing hub, enabling:
 
 #### Primary Circuit Details
 Bandwidth: 100 Gbps
-Interface: QSFP28 (100Gbps Ethernet)
+Interface: 100Gbps Ethernet
 Protocol: IPv6 with QoS
 VLAN: 1001 (Federated Learning)
 

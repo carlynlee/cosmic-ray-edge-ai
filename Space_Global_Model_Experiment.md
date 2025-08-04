@@ -16,15 +16,15 @@ graph TB
         end
         
         subgraph "MIT"
-            M_DET[Cosmic Ray Detector<br/>Medium-Energy Particles]
+            M_DET[Cosmic Ray Detector<br/>Muon Detector<br/>Medium-Energy Particles]
             M_DATA[Local Data<br/>Clusters 4-6]
-            M_MODEL[Local Model<br/>Medium-Energy Expert]
+            M_MODEL[Local Model<br/>Muon Detection Expert]
         end
         
         subgraph "University of Delaware"
-            U_DET[Cosmic Ray Detector<br/>Low-Energy Particles]
+            U_DET[Cosmic Ray Detector<br/>Distributed Computing<br/>Low-Energy Particles]
             U_DATA[Local Data<br/>Clusters 7-9]
-            U_MODEL[Local Model<br/>Low-Energy Expert]
+            U_MODEL[Local Model<br/>Distributed Computing Expert]
         end
     end
     

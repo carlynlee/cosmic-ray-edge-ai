@@ -46,8 +46,8 @@ graph TB
     
     subgraph "Distributed Sensor Network"
         CALTECH[Caltech Cosmic Ray Lab<br/>10Gbps<br/>Muon Detector<br/>Real-time Processing]
-        MIT[MIT Space Science Lab<br/>10Gbps<br/>Space Weather<br/>Correlation Analysis]
-        UDEL[University of Delaware<br/>10Gbps<br/>Cosmic Ray Detection<br/>Local ML]
+        MIT[MIT Cosmic Watch Lab<br/>10Gbps<br/>Muon Detector<br/>Cosmic Ray Analysis]
+        UDEL[University of Delaware<br/>10Gbps<br/>Cosmic Ray Detection<br/>Distributed Computing]
         PARTNER1[Partner Institution 3<br/>10Gbps<br/>Cosmic Ray Detection<br/>Local ML]
         PARTNER2[Partner Institution 4<br/>10Gbps<br/>Cosmic Ray Detection<br/>Local ML]
         PARTNER3[Partner Institution 5<br/>1Gbps<br/>Cosmic Ray Detection<br/>Local ML]
