@@ -141,29 +141,26 @@ Primary Circuit:
 - Protocol: IPv6
 - VLAN: 1001 (Federated Learning)
 - QoS: Priority queuing
-- Encryption: TLS 1.3
 
 Secondary Circuits:
 - Protocol: IPv6
 - VLAN: 1002 (Sensor Data)
 - QoS: Best effort
-- Encryption: TLS 1.3
 
 Booth Connection:
 - Protocol: IPv6
 - VLAN: 1003 (Live Demo)
 - QoS: Real-time priority
-- Encryption: TLS 1.3
 ```
 
 ### Application Protocols
 ```
 Federated Learning: TCP/8888 (Flower)
-Data Streaming: WebSocket/TLS (Port 443)
-Model Transfer: HTTP/2/TLS (Port 443)
+Data Streaming: WebSocket (Port 443)
+Model Transfer: HTTP/2 (Port 443)
 Monitoring: HTTP (Port 9090)
 Control: gRPC (Port 50051)
-Live Demo: WebSocket/TLS (Port 443)
+Live Demo: WebSocket (Port 443)
 ```
 
 ## Performance Metrics

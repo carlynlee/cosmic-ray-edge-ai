@@ -140,9 +140,9 @@ VLAN: 1001 (Federated Learning)
 - **Priority 4**: Monitoring and control traffic (best effort)
 
 ### Security Requirements
-- **Encryption**: TLS 1.3 for all data transmission
-- **Authentication**: X.509 certificates for node authentication
-- **Authorization**: Role-based access control (RBAC)
+- **Encryption**: TLS for data transmission
+- **Authentication**: Node authentication
+- **Authorization**: Access control
 - **Network Isolation**: Separate VLAN for federated learning traffic
 
 ### Monitoring and Telemetry
