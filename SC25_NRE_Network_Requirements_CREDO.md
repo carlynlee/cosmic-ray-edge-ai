@@ -10,12 +10,12 @@
 
 ## Summary
 
-This NRE demonstrates a distributed cosmic ray detection network using federated learning to process real-time data from multiple sensor nodes. The experiment showcases how distributed computing can enable collaborative scientific discovery while preserving data privacy through federated learning techniques.
+This NRE demonstrates a distributed cosmic ray detection network using federated learning to process real-time data from multiple sensor nodes. The experiment showcases how distributed computing can enable collaborative scientific discovery through federated learning techniques.
 
 ## Use Case Description
 
 ### Scientific Objective
-Our experiment demonstrates real-time cosmic ray detection and analysis using a distributed network of sensors. The system processes cosmic ray detection events from multiple geographically distributed nodes, applies machine learning for pattern recognition, and uses federated learning to collaboratively train models without sharing raw data.
+Our experiment demonstrates real-time cosmic ray detection and analysis using a distributed network of sensors. The system processes cosmic ray detection events from multiple geographically distributed nodes, applies machine learning for pattern recognition, and uses federated learning to collaboratively train models across institutions.
 
 ### SCinet Cluster Integration
 The SCinet Compute Cluster will serve as our central processing hub, enabling:
@@ -213,8 +213,7 @@ VLAN: 1001 (Federated Learning)
 
 ### Diagrams and Documentation
 - **Network Topology Diagram**: https://github.com/carlynlee/credo-api-tools/blob/sc25-nre-submission/CREDO_Network_Topology.md
-- **Deployment Architecture**: https://github.com/carlynlee/credo-api-tools/blob/sc25-nre-submission/CREDO_Deployment_Architecture.md
-- **Data Flow Diagram**: https://github.com/carlynlee/credo-api-tools/blob/sc25-nre-submission/CREDO_Data_Flow.md
+- **Space Deployment Experiment**: https://github.com/carlynlee/credo-api-tools/blob/sc25-nre-submission/Space_Global_Model_Experiment.md
 
 ### Contact Information
 - **Project Lead**: Carlyn Lee (cblee@caltech.edu)
@@ -239,8 +238,7 @@ All SC25 NRE submission documents are available in the GitHub repository:
 
 - **Main Requirements Document**: https://github.com/carlynlee/credo-api-tools/blob/sc25-nre-submission/SC25_NRE_Network_Requirements_CREDO.md
 - **Network Topology**: https://github.com/carlynlee/credo-api-tools/blob/sc25-nre-submission/CREDO_Network_Topology.md
-- **Data Flow**: https://github.com/carlynlee/credo-api-tools/blob/sc25-nre-submission/CREDO_Data_Flow.md
-- **Deployment Architecture**: https://github.com/carlynlee/credo-api-tools/blob/sc25-nre-submission/CREDO_Deployment_Architecture.md
+- **Space Deployment Experiment**: https://github.com/carlynlee/credo-api-tools/blob/sc25-nre-submission/Space_Global_Model_Experiment.md
 - **Repository Home**: https://github.com/carlynlee/credo-api-tools/tree/sc25-nre-submission
 
 ---
