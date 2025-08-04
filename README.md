@@ -4,9 +4,9 @@ A distributed cosmic ray detection network using federated learning to enable co
 
 ## 🎯 Project Overview
 
-**Purpose:** Demonstrate privacy-preserving federated learning for cosmic ray image classification across Caltech, MIT, and University of Delaware.
+**Purpose:** Propose a federated learning demonstration for cosmic ray image classification across Caltech, MIT, and University of Delaware.
 
-**Key Innovation:** Institutions collaborate to build a comprehensive global model while maintaining data sovereignty and privacy.
+**Key Innovation:** Institutions would collaborate to build a comprehensive global model while maintaining data sovereignty.
 
 ## 🚀 Quick Start
 
@@ -64,11 +64,11 @@ credo-api-tools/
 - **University of Delaware:** 3 detectors, clusters 7-9 (low-energy particles)
 - **Total:** 2,354 cosmic ray images across 10 detectors
 
-### **Privacy-Preserving Collaboration**
-- No raw data shared between institutions
-- Only model parameters exchanged via federated averaging
+### **Collaborative Learning**
+- Model parameters exchanged via federated averaging
 - Each institution maintains data sovereignty
 - Global model combines knowledge from all institutions
+- Collaborative scientific discovery across institutions
 
 ### **Real-Time Classification**
 - ResNet50 for feature extraction
@@ -118,12 +118,12 @@ See [`Space_Global_Model_Experiment.md`](Space_Global_Model_Experiment.md) for d
 
 ## 🎪 SC25 Conference
 
-This project is prepared for demonstration at the Supercomputing Conference 2025 (SC25) Network Research Exhibit, showcasing distributed AI for scientific collaboration.
+This project is proposed for demonstration at the Supercomputing Conference 2025 (SC25) Network Research Exhibit, showcasing distributed AI for scientific collaboration.
 
-### **Demo Components**
-- Live multi-institution federated learning
+### **Proposed Demo Components**
+- Multi-institution federated learning
 - Real cosmic ray data processing
-- Privacy-preserving model sharing
+- Collaborative model sharing
 - Space deployment experiment
 
 ## 🤝 Contributing
@@ -136,6 +136,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-**Project Status:** Ready for SC25 demonstration  
+**Project Status:** Proposed for SC25 demonstration  
 **Last Updated:** August 2025  
 **Focus:** Multi-institution federated learning for cosmic ray detection

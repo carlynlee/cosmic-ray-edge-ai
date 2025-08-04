@@ -22,6 +22,15 @@ graph TB
         end
     end
     
+    subgraph "Caltech Booth"
+        subgraph "General Exhibit Area"
+            BOOTH_CPU1[Booth CPU Node 1<br/>32-core<br/>256GB RAM<br/>1TB NVMe<br/>10Gbps NIC]
+            BOOTH_CPU2[Booth CPU Node 2<br/>32-core<br/>256GB RAM<br/>1TB NVMe<br/>10Gbps NIC]
+            BOOTH_STORAGE[Booth Storage<br/>1TB NVMe<br/>10Gbps NIC]
+            BOOTH_DISPLAY[Live Demo Display<br/>Real-time Visualization]
+        end
+    end
+    
     subgraph "Caltech NOC"
         subgraph "Network Operations Center"
             ROUTER1[Router 1<br/>100Gbps<br/>Primary]
@@ -37,7 +46,8 @@ graph TB
     
     subgraph "Distributed Sensor Network"
         CALTECH[Caltech Cosmic Ray Lab<br/>10Gbps<br/>Muon Detector<br/>Real-time Processing]
-        MITUDEL[MIT/UDel Space Science Lab<br/>10Gbps<br/>Space Weather<br/>Correlation Analysis]
+        MIT[MIT Space Science Lab<br/>10Gbps<br/>Space Weather<br/>Correlation Analysis]
+        UDEL[University of Delaware<br/>10Gbps<br/>Cosmic Ray Detection<br/>Local ML]
         PARTNER1[Partner Institution 3<br/>10Gbps<br/>Cosmic Ray Detection<br/>Local ML]
         PARTNER2[Partner Institution 4<br/>10Gbps<br/>Cosmic Ray Detection<br/>Local ML]
         PARTNER3[Partner Institution 5<br/>1Gbps<br/>Cosmic Ray Detection<br/>Local ML]
@@ -74,7 +84,8 @@ graph TB
     ROUTER1 -.->|100 Gbps Primary Circuit| FL
     
     CALTECH --> ROUTER1
-    MITUDEL --> ROUTER1
+    MIT --> ROUTER1
+    UDEL --> ROUTER1
     PARTNER1 --> ROUTER1
     PARTNER2 --> ROUTER1
     PARTNER3 --> ROUTER1
@@ -93,7 +104,11 @@ graph TB
     style FL fill:#fff3e0
     style ROUTER1 fill:#e8f5e8
     style CALTECH fill:#fff8e1
-    style MITUDEL fill:#fff8e1
+    style MIT fill:#e8f5e8
+    style UDEL fill:#fff8e1
+    style BOOTH_CPU1 fill:#f3e5f5
+    style BOOTH_CPU2 fill:#f3e5f5
+    style BOOTH_DISPLAY fill:#e1f5fe
 ```
 
 ## Bandwidth Allocation
@@ -107,8 +122,10 @@ graph TB
 
 ### Secondary Circuits (Self-Managed)
 - **Caltech Lab**: 10 Gbps
-- **MIT/University of Delaware Lab**: 10 Gbps
+- **MIT Lab**: 10 Gbps
+- **University of Delaware**: 10 Gbps
 - **Partner Institutions**: 40 Gbps total (5-10 Gbps each)
+- **Caltech Booth**: 10 Gbps (to SCinet cluster)
 
 ### Peak Usage Scenarios
 - **Normal Operation**: 50 Gbps sustained
@@ -131,6 +148,12 @@ Secondary Circuits:
 - VLAN: 1002 (Sensor Data)
 - QoS: Best effort
 - Encryption: TLS 1.3
+
+Booth Connection:
+- Protocol: IPv6
+- VLAN: 1003 (Live Demo)
+- QoS: Real-time priority
+- Encryption: TLS 1.3
 ```
 
 ### Application Protocols
@@ -140,6 +163,7 @@ Data Streaming: WebSocket/TLS (Port 443)
 Model Transfer: HTTP/2/TLS (Port 443)
 Monitoring: HTTP (Port 9090)
 Control: gRPC (Port 50051)
+Live Demo: WebSocket/TLS (Port 443)
 ```
 
 ## Performance Metrics
@@ -149,12 +173,14 @@ Control: gRPC (Port 50051)
 - **Model Updates**: < 100ms
 - **Data Sync**: < 1s
 - **Control Commands**: < 50ms
+- **Live Demo**: < 50ms
 
 ### Throughput Targets
 - **Peak Data Rate**: 160 Gbps
 - **Sustained Rate**: 50 Gbps
 - **Storage I/O**: 100 Gbps
 - **Inter-node**: 400 Gbps
+- **Booth Demo**: 10 Gbps
 
 ### Reliability Targets
 - **Uptime**: 99.9%
@@ -202,6 +228,15 @@ graph TB
         end
     end
     
+    subgraph "Caltech Booth"
+        subgraph "Live Demo Environment"
+            BOOTH_DEMO[Live Demo Server<br/>Real-time Processing]
+            BOOTH_VIZ[Visualization Engine<br/>Real-time Plots]
+            BOOTH_DATA[Local Data Cache<br/>1TB NVMe]
+            BOOTH_DISPLAY[Demo Display<br/>4K Monitors]
+        end
+    end
+    
     FL_SERVER --> FL_COORD
     FL_COORD --> ML_TRAIN
     ML_TRAIN --> ML_INFER
@@ -218,6 +253,10 @@ graph TB
     ALERTS --> TELEMETRY
     TELEMETRY --> MONITOR
     
+    BOOTH_DEMO --> BOOTH_VIZ
+    BOOTH_VIZ --> BOOTH_DISPLAY
+    BOOTH_DEMO --> BOOTH_DATA
+    
     style FL_SERVER fill:#fff3e0
     style ML_TRAIN fill:#f3e5f5
     style DATA_STORE fill:#e8f5e8
@@ -226,6 +265,9 @@ graph TB
     style PROCESSED fill:#e8f5e8
     style MODELS fill:#f3e5f5
     style EXPORTS fill:#fff8e1
+    style BOOTH_DEMO fill:#f3e5f5
+    style BOOTH_VIZ fill:#e1f5fe
+    style BOOTH_DISPLAY fill:#fff8e1
 ```
 
 ---

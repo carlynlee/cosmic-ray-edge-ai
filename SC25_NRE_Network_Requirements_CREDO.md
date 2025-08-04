@@ -3,14 +3,21 @@
 **Project**: Distributed Cosmic Ray Detection Network with Federated Learning  
 **Principal Investigator**: Carlyn Lee (Caltech)  
 **Institution**: California Institute of Technology  
-**Collaborators**: University of Delaware, MIT (Cosmic Watch Muon Detectors)  
+**Proposed Collaborators**: University of Delaware, MIT (Cosmic Watch Muon Detectors)  
 **NRE Title**: "Real-Time Cosmic Ray Detection and Analysis Using Distributed Sensor Networks"  
 **Submission Date**: August 1, 2025  
 **Repository**: https://github.com/carlynlee/credo-api-tools/tree/sc25-nre-submission  
 
 ## Summary
 
-This NRE demonstrates a distributed cosmic ray detection network using federated learning to process real-time data from multiple sensor nodes. The experiment showcases how distributed computing can enable collaborative scientific discovery through federated learning techniques.
+This NRE proposes to demonstrate a distributed cosmic ray detection network using federated learning to process real-time data from multiple sensor nodes. The experiment would explore how distributed computing could enable collaborative scientific discovery through federated learning techniques.
+
+## Proposed Collaboration
+
+### Institutional Roles
+- **Caltech**: Project coordination, SCinet deployment, and federated learning framework
+- **MIT**: Cosmic Watch detector expertise, data analysis, and machine learning contributions
+- **University of Delaware**: Cosmic Watch detector deployment, data validation, and distributed computing expertise
 
 ## Use Case Description
 
@@ -22,7 +29,7 @@ The SCinet Compute Cluster will serve as our central processing hub, enabling:
 - **Real-time data aggregation** from distributed cosmic ray detectors
 - **Federated learning coordination** across multiple sensor nodes
 - **High-performance model training** using GPU acceleration
-- **Distributed storage and analysis** of cosmic ray event data
+- **Distributed storage and analysis** of potential cosmic ray event data
 
 ### Success Metrics
 - Process 10,000+ cosmic ray detection events per hour
@@ -40,9 +47,11 @@ The SCinet Compute Cluster will serve as our central processing hub, enabling:
 
 ### Component Distribution
 - **A Location**: SCinet Compute Cluster (St. Louis Convention Center)
+- **Booth Location**: Caltech Booth in General Exhibit Area (St. Louis Convention Center)
 - **Z Locations**: 8+ distributed sensor nodes (Caltech, MIT, University of Delaware, partner institutions)
 - **Edge Processing**: Local preprocessing at each sensor node
 - **Central Coordination**: Federated learning server on SCinet cluster
+- **Live Demo**: Real-time processing at Caltech booth
 
 ## Network Requirements
 
@@ -51,7 +60,7 @@ The SCinet Compute Cluster will serve as our central processing hub, enabling:
 #### Primary Circuit (SCinet Managed)
 - **A Location**: SCinet Compute Cluster, St. Louis Convention Center
 - **Z Location**: Caltech Network Operations Center
-- **Connection Type**: 100Gbps Ethernet (QSFP28)
+- **Connection Type**: 100Gbps Ethernet
 - **Protocol**: Layer 3 (IPv6)
 - **Bandwidth**: 100 Gbps dedicated
 - **Purpose**: Primary data pipeline and federated learning coordination
@@ -68,6 +77,12 @@ The SCinet Compute Cluster will serve as our central processing hub, enabling:
   - Protocol: Layer 3 (IPv6)
   - Bandwidth: 10 Gbps
   - Purpose: Space weather correlation data
+
+- **Caltech Booth**: General Exhibit Area (St. Louis Convention Center)
+  - Connection: 10Gbps Ethernet to SCinet cluster
+  - Protocol: Layer 3 (IPv6)
+  - Bandwidth: 10 Gbps
+  - Purpose: Live demonstration and real-time processing
 
 - **Sensor Node 3-8**: Partner Institutions
   - Connection: 1-10Gbps Ethernet (varies by institution)
@@ -98,59 +113,19 @@ The SCinet Compute Cluster will serve as our central processing hub, enabling:
 - **QoS**: Priority queuing for real-time cosmic ray data
 
 #### Application Protocols
-- **Federated Learning**: Custom protocol over TCP/8888
-- **Data Streaming**: WebSocket over TLS/443
-- **Model Transfer**: HTTP/2 over TLS/443
-- **Monitoring**: Prometheus metrics over HTTP/9090
-
-## Compute Cluster Requirements
-
-### Ecosystem/Methodology
-- **Container Orchestration**: Kubernetes (K8s)
-- **Job Scheduling**: SLURM for batch processing
-- **Federated Learning**: Flower (flwr) framework
-- **Machine Learning**: TensorFlow/PyTorch with GPU acceleration
-
-### Node Requirements
-
-#### Dedicated Node Access
-- **Primary**: 2x GPU Nodes (H100 SXM) for model training
-- **Secondary**: 4x CPU Nodes for data preprocessing
-- **Storage**: 1TB NVMe per node for high-speed I/O
-
-#### Compute Specifications
-- **GPU Nodes**: 2x H100 SXM (8x GPUs total)
-- **CPU Nodes**: 4x 32-core nodes (128 cores total)
-- **Memory**: 1.5TB per GPU node, 256GB per CPU node
-- **Storage**: 150TB NVMe shared storage
-
-### Bandwidth Requirements
-- **Inter-node Communication**: 400 Gbps (ConnectX-7)
-- **Storage I/O**: 100 Gbps sustained
-- **Federated Learning**: 200 Gbps during model aggregation
-- **Data Pipeline**: 50 Gbps for real-time processing
-
-### Storage Requirements
-- **Raw Data**: 50TB for cosmic ray event storage
-- **Processed Data**: 25TB for feature vectors and metadata
-- **Model Storage**: 5TB for federated learning models
-- **Temporary Storage**: 20TB for intermediate processing
-- **Total**: 100TB NVMe storage
-
-## Technical Implementation
+- **Federated Learning**: TCP/8888 (Flower framework)
+- **Data Streaming**: WebSocket/TLS (Port 443)
+- **Model Transfer**: HTTP/2/TLS (Port 443)
+- **Monitoring**: HTTP (Port 9090)
+- **Control**: gRPC (Port 50051)
 
 ### Network Configuration
 
-#### SCinet Circuit Configuration
-```yaml
-Circuit: CREDO-Primary-100G
-A-Location: SCinet Compute Cluster
-Z-Location: Caltech NOC
+#### Primary Circuit Details
 Bandwidth: 100 Gbps
 Interface: QSFP28 (100Gbps Ethernet)
 Protocol: IPv6 with QoS
 VLAN: 1001 (Federated Learning)
-```
 
 #### QoS Configuration
 - **Priority 1**: Real-time cosmic ray events (latency < 10ms)
@@ -212,18 +187,23 @@ VLAN: 1001 (Federated Learning)
 ## Additional Information
 
 ### Diagrams and Documentation
-- **Network Topology Diagram**: https://github.com/carlynlee/credo-api-tools/blob/sc25-nre-submission/CREDO_Network_Topology.md
-- **Space Deployment Experiment**: https://github.com/carlynlee/credo-api-tools/blob/sc25-nre-submission/Space_Global_Model_Experiment.md
+- **Proposed Network Topology Diagram**: https://github.com/carlynlee/credo-api-tools/blob/sc25-nre-submission/CREDO_Network_Topology.md
+- **Proposed Space Deployment Experiment**: https://github.com/carlynlee/credo-api-tools/blob/sc25-nre-submission/Space_Global_Model_Experiment.md
 
 ### Contact Information
 - **Project Lead**: Carlyn Lee (cblee@caltech.edu)
 - **Network Engineer**: [To be assigned by SCinet]
 
 ### Special Requirements
-- **Power**: 8x C19 outlets for GPU nodes
-- **Cooling**: Adequate cooling for 8x H1Technical00 GPUs
+- **Powert and Cooling**: Adequate for GPUs
 - **Physical Access**: 24/7 access to compute cluster
 - **Network Access**: Dedicated 100Gbps circuit with guaranteed bandwidth
+
+### Caltech Booth Requirements
+- **Booth Space**: in general exhibit area
+- **Network**: 10Gbps connection to SCinet cluster
+- **Compute**: 2x CPU nodes for live demonstration
+- **Storage**: 1TB NVMe for local data processing
 
 ### Success Criteria
 - Process 10,000+ cosmic ray events per hour
