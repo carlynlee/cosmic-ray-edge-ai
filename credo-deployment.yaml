@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: credo-demo
+  namespace: cblee-credo
+  labels:
+    app: credo-demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: credo-demo
+  template:
+    metadata:
+      labels:
+        app: credo-demo
+    spec:
+      containers:
+      - name: credo-container
+        image: gitlab-registry.nrp-nautilus.io/cloud-ai-100/qaic-docker-images:vllm-latest
+        ports:
+        - containerPort: 8888
+        - containerPort: 5000
+        resources:
+          requests:
+            cpu: "4"
+            memory: "16Gi"
+          limits:
+            cpu: "8"
+            memory: "32Gi"
+        env:
+        - name: PYTHONUNBUFFERED
+          value: "1"
+        - name: TF_CPP_MIN_LOG_LEVEL
+          value: "2"
+        - name: PYTHONPATH
+          value: "/workspace"
+        - name: NVIDIA_VISIBLE_DEVICES
+          value: "none"
+        command:
+        - /bin/bash
+        - -c
+        - |
+          echo "Starting CREDO demo container..."
+          echo "Installing dependencies..."
+          pip install tensorflow scikit-learn elasticsearch opencv-python matplotlib seaborn flwr flask sentence-transformers
+          echo "CREDO container ready!"
+          sleep infinity

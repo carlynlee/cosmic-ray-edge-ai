@@ -2,13 +2,13 @@
 
 A distributed cosmic ray detection network using federated learning to enable collaborative machine learning across multiple institutions without sharing raw data.
 
-## 🎯 Project Overview
+## Project Overview
 
 **Purpose:** Propose a federated learning demonstration for cosmic ray image classification across Caltech, MIT, and University of Delaware.
 
 **Key Innovation:** Institutions would collaborate to build a comprehensive global model while maintaining data sovereignty.
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
 - Python 3.8+
@@ -37,7 +37,7 @@ kubectl exec -n cblee-credo credo-image-clustering-cpu-7787846784-qmrqf -- bash
 python /data/scripts_example/federated_learning_multi_institution_demo.py
 ```
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 credo-api-tools/
@@ -56,7 +56,7 @@ credo-api-tools/
 └── data-processor/                            # Data processing tools
 ```
 
-## 🔬 Core Capabilities
+## Core Capabilities
 
 ### **Multi-Institution Federated Learning**
 - **Caltech:** 4 detectors, clusters 0-3 (high-energy particles)
@@ -76,13 +76,13 @@ credo-api-tools/
 - 10 distinct cosmic ray pattern clusters
 - Real-time classification of new particles
 
-## 🛰️ Space Deployment Experiment
+## Space Deployment Experiment
 
 The project includes a comprehensive space deployment experiment showing how the global model can be deployed to satellites for autonomous cosmic ray classification in space.
 
 See [`Space_Global_Model_Experiment.md`](Space_Global_Model_Experiment.md) for detailed diagrams and specifications.
 
-## 📊 Demo Results
+## Demo Results
 
 ### **Federated Learning Performance**
 - **Round 1:** All institutions achieve >96% accuracy
@@ -95,7 +95,7 @@ See [`Space_Global_Model_Experiment.md`](Space_Global_Model_Experiment.md) for d
 - **Institution Specialization:** Each institution excels at local particle types
 - **Combined Knowledge:** Global model has comprehensive expertise
 
-## 🏗️ Technical Architecture
+## Technical Architecture
 
 ### **Network Requirements**
 - **Bandwidth:** 10 Gbps for real-time data transmission
