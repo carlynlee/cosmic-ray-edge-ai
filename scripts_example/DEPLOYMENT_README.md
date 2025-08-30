@@ -2,13 +2,13 @@
 
 Current deployment status and access instructions for the CREDO federated learning demo.
 
-## 🚀 Current Deployment
+## Current Deployment
 
 ### **Cluster Information**
 - **Cluster:** Nautilus QAIC Cluster
 - **Namespace:** `cblee-credo`
 - **Pod:** `credo-image-clustering-cpu-7787846784-qmrqf`
-- **Status:** ✅ Running
+- **Status:** Running
 
 ### **Quick Access**
 ```bash
@@ -22,7 +22,7 @@ kubectl exec -n cblee-credo credo-image-clustering-cpu-7787846784-qmrqf -- bash
 kubectl exec -n cblee-credo credo-image-clustering-cpu-7787846784-qmrqf -- python /data/scripts_example/SC25_Simple_Demo.py
 ```
 
-## 📊 Available Scripts
+## Available Scripts
 
 ### **Demo Scripts**
 - `SC25_Simple_Demo.py` - Presentation demo
@@ -33,7 +33,7 @@ kubectl exec -n cblee-credo credo-image-clustering-cpu-7787846784-qmrqf -- pytho
 - `analyze_device_ids.py` - Device analysis
 - `visualize_cluster_samples.py` - Visualization
 
-## 📁 Data Structure
+## Data Structure
 
 ```
 /data/
@@ -53,12 +53,12 @@ kubectl exec -n cblee-credo credo-image-clustering-cpu-7787846784-qmrqf -- pytho
 - **Dependencies:** All required packages installed
 
 ### **Data Status**
-- ✅ **Images:** 2,354 cosmic ray images extracted
-- ✅ **Clustering:** K-means model trained
-- ✅ **Analysis:** Device statistics generated
-- ✅ **Demo:** Ready for SC25 presentation
+- **Images:** 2,354 cosmic ray images extracted
+- **Clustering:** K-means model trained
+- **Analysis:** Device statistics generated
+- **Demo:** Ready for SC25 presentation
 
-## 🎪 SC25 Demo
+## SC25 Demo
 
 ### **Simple Demo (Recommended)**
 ```bash
@@ -70,7 +70,7 @@ kubectl exec -n cblee-credo credo-image-clustering-cpu-7787846784-qmrqf -- pytho
 kubectl exec -n cblee-credo credo-image-clustering-cpu-7787846784-qmrqf -- python /data/scripts_example/federated_learning_multi_institution_demo.py
 ```
 
-## 🔍 Troubleshooting
+## Troubleshooting
 
 ### **Common Issues**
 1. **Pod not running:** Check with `kubectl get pods -n cblee-credo`
@@ -89,7 +89,7 @@ kubectl exec -n cblee-credo credo-image-clustering-cpu-7787846784-qmrqf -- ls -l
 kubectl exec -n cblee-credo credo-image-clustering-cpu-7787846784-qmrqf -- python -c "import tensorflow as tf; print(tf.__version__)"
 ```
 
-## 📈 Performance
+## Performance
 
 ### **Current Status**
 - **Data:** 2,354 images processed

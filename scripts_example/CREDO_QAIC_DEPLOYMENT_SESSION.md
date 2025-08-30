@@ -6,7 +6,7 @@
 **Namespace**: cblee-credo  
 **Project**: Multi-institution federated learning for cosmic ray detection
 
-## 🎯 Session Objectives
+## Session Objectives
 
 - Deploy CREDO multi-institution federated learning project to Nautilus cluster
 - Process 2,354 images from `hit-images-final.zip`
@@ -16,12 +16,12 @@
 
 ## 📋 Prerequisites Met
 
-- ✅ Access to Nautilus cluster
-- ✅ Namespace `cblee-credo` exists
-- ✅ kubectl configured
-- ✅ Project code and `hit-images-final.zip` available
+- Access to Nautilus cluster
+- Namespace `cblee-credo` exists
+- kubectl configured
+- Project code and `hit-images-final.zip` available
 
-## 🚀 Deployment Process
+## Deployment Process
 
 ### Phase 1: Initial Setup and Permissions
 
@@ -60,7 +60,7 @@ Warning  FailedScheduling  0/451 nodes are available: 1 Insufficient qualcomm.co
 - sentence-transformers>=2.2.0
 - And 20+ additional packages
 
-## 📁 Files Created/Modified
+## Files Created/Modified
 
 ### Deployment Manifests
 1. **`credo-image-clustering-deployment.yaml`** - Original QAIC deployment
@@ -81,7 +81,7 @@ Warning  FailedScheduling  0/451 nodes are available: 1 Insufficient qualcomm.co
 2. **`Dockerfile`** - Custom container configuration
 3. **`DEPLOYMENT_README.md`** - Comprehensive deployment guide
 
-## 🗂️ Storage Configuration
+## Storage Configuration
 
 ### Persistent Volume Claims
 - **`credo-pvc-cblee`**: 20Gi for code and models
@@ -97,7 +97,7 @@ Warning  FailedScheduling  0/451 nodes are available: 1 Insufficient qualcomm.co
 └── processed/        # Intermediate data
 ```
 
-## 📊 Results Achieved
+## Results Achieved
 
 ### **Image Processing**
 - **Total Images**: 2,354 cosmic ray detections
@@ -118,10 +118,10 @@ Warning  FailedScheduling  0/451 nodes are available: 1 Insufficient qualcomm.co
 
 ## 🔧 Current Deployment Status
 
-### **✅ ACTIVE DEPLOYMENT**
+### **ACTIVE DEPLOYMENT**
 - **Pod**: `credo-image-clustering-cpu-7787846784-qmrqf`
 - **Namespace**: `cblee-credo`
-- **Status**: ✅ Running
+- **Status**: Running
 - **Container**: `gitlab-registry.nrp-nautilus.io/cloud-ai-100/qaic-docker-images:vllm-latest`
 - **Resources**: 4-8 CPU cores, 16-32GB RAM
 
@@ -154,7 +154,7 @@ kubectl exec -n cblee-credo credo-image-clustering-cpu-7787846784-qmrqf -- pytho
 kubectl exec -n cblee-credo credo-image-clustering-cpu-7787846784-qmrqf -- python cluster_local_images.py
 ```
 
-## 🎪 SC25 Conference Preparation
+## SC25 Conference Preparation
 
 ### **Demo Scripts Ready**
 1. **Simple Demo**: `SC25_Simple_Demo.py` - Perfect for booth presentations
@@ -190,7 +190,7 @@ kubectl exec -n cblee-credo credo-image-clustering-cpu-7787846784-qmrqf -- pytho
 - Real-time monitoring dashboard
 - Interactive cluster exploration
 
-## 📈 Performance Metrics
+## Performance Metrics
 
 ### **Current Results**
 - **Images Processed**: 2,354
@@ -205,7 +205,7 @@ kubectl exec -n cblee-credo credo-image-clustering-cpu-7787846784-qmrqf -- pytho
 - **Memory**: 32Gi available
 - **GPU**: Qualcomm AI 100 acceleration
 
-## 🔍 Troubleshooting
+## Troubleshooting
 
 ### **Common Issues**
 
@@ -258,7 +258,7 @@ kubectl exec -it -n cblee-credo <POD_NAME> -- /bin/bash
 
 See [LICENSE](LICENSE) file for details.
 
-## 🔗 Related Links
+## Related Links
 
 - [Nautilus Cluster Documentation](https://nrp.ai/documentation/userdocs/ai/qaic/)
 - [Flower Federated Learning](https://flower.dev/)
@@ -267,6 +267,6 @@ See [LICENSE](LICENSE) file for details.
 ---
 
 **Last Updated**: August 3, 2025  
-**Status**: ✅ Active deployment with multi-institution federated learning  
-**SC25 Ready**: ✅ All demos tested and working  
+**Status**: Active deployment with multi-institution federated learning
+**SC25 Ready**: All demos tested and working  
 **Contact**: For issues, create an issue in this repository 

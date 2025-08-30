@@ -2,7 +2,7 @@
 
 This directory contains the core demonstration scripts for the CREDO federated learning network.
 
-## 🚀 Quick Demo
+## Quick Demo
 
 ### **Simple Demo (Recommended for Presentations)**
 ```bash
@@ -22,7 +22,7 @@ python federated_learning_multi_institution_demo.py
 - Privacy-preserving model sharing
 - Comprehensive results and visualizations
 
-## 📊 Data Preparation Scripts
+## Data Preparation Scripts
 
 ### **Device Analysis**
 ```bash
@@ -48,7 +48,7 @@ python visualize_cluster_samples.py
 - Shows particle pattern distributions
 - Creates cluster analysis plots
 
-## 📁 Script Descriptions
+## Script Descriptions
 
 | Script | Purpose | Output |
 |--------|---------|--------|
@@ -58,7 +58,7 @@ python visualize_cluster_samples.py
 | `analyze_device_ids.py` | Device analysis | Device statistics |
 | `visualize_cluster_samples.py` | Visualization | Cluster plots |
 
-## 🎯 Demo Results
+## Demo Results
 
 ### **Federated Learning Performance**
 - **3 Institutions:** Caltech, MIT, University of Delaware
@@ -92,7 +92,7 @@ pip install -r requirements.txt
 python SC25_Simple_Demo.py
 ```
 
-## 📈 Output Files
+## Output Files
 
 Scripts generate results in `/data/exports/`:
 - `cluster_results.txt` - Image to cluster mappings
@@ -100,7 +100,7 @@ Scripts generate results in `/data/exports/`:
 - `multi_institution_fl_results.json` - FL training results
 - `*.png` - Visualization plots
 
-## 🎪 SC25 Conference
+## SC25 Conference
 
 These scripts are optimized for the SC25 Network Research Exhibit demonstration, showcasing:
 - **Privacy-preserving federated learning**

@@ -106,3 +106,4 @@ venv.bak/
 .idea/
 
 credo-data-export/
+.DS_Store

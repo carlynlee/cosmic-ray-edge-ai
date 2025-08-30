@@ -112,7 +112,7 @@ def create_cluster_summary(df):
         cluster_data = df[df['Cluster'] == cluster_id]
         cluster_images = cluster_data['Image_Path'].tolist()
         
-        print(f"\n📊 Cluster {cluster_id}:")
+        print(f"\nCluster {cluster_id}:")
         print(f"   • Total images: {len(cluster_images)}")
         print(f"   • Sample filenames:")
         

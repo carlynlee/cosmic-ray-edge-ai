@@ -282,7 +282,7 @@ def run_multi_institution_demo():
         # Federated averaging
         if round_weights:
             global_weights = federated_average(round_weights)
-            print(f"\n🔗 FEDERATED AVERAGING COMPLETED")
+            print(f"\nFEDERATED AVERAGING COMPLETED")
             print(f"   Combined knowledge from {len(round_weights)} institutions")
             print(f"   No raw data shared - only model parameters exchanged")
         
