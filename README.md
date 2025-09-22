@@ -29,6 +29,22 @@ python scripts_example/SC25_Simple_Demo.py
 ```
 
 ### Kubernetes Deployment
+
+#### Three-Pod System (Recommended)
+```bash
+# Deploy the complete three-pod system
+./deploy/01-deploy-credo-system.sh
+
+# Check system status
+./deploy/02-status.sh all
+
+# Access the system
+kubectl port-forward -n cblee-credo svc/credo-caltech-server-service 8888:8888
+kubectl port-forward -n cblee-credo svc/caltech-fl-server-service 5000:5000
+kubectl port-forward -n cblee-credo svc/credo-elasticsearch-service 9200:9200
+```
+
+#### Legacy Deployment
 ```bash
 # Access the deployed pod
 kubectl exec -n cblee-credo credo-image-clustering-cpu-7787846784-qmrqf -- bash
@@ -45,6 +61,12 @@ credo-api-tools/
 ├── Space_Global_Model_Experiment.md             # Space deployment experiment
 ├── SC25_NRE_Network_Requirements_CREDO.md      # Network requirements
 ├── CREDO_Network_Topology.md                   # Network architecture
+├── deploy/                                     # Deployment scripts for three-pod system
+│   ├── CREDO_THREE_POD_SYSTEM.md              # Deployment documentation
+│   ├── 00-cleanup-existing.sh                 # Cleanup script
+│   ├── 01-deploy-credo-system.sh              # Main deployment script
+│   ├── 02-status.sh                           # Status and monitoring
+│   └── 03-data-management.sh                  # Data management
 ├── scripts_example/                            # Demo scripts and data
 │   ├── README.md                              # Script documentation
 │   ├── SC25_Simple_Demo.py                    # Easy demo script
@@ -111,6 +133,7 @@ See [`Space_Global_Model_Experiment.md`](Space_Global_Model_Experiment.md) for d
 
 ## 📚 Documentation
 
+- **[Deployment Scripts](deploy/CREDO_THREE_POD_SYSTEM.md)** - Complete deployment guide for three-pod system
 - **[Network Requirements](SC25_NRE_Network_Requirements_CREDO.md)** - Detailed network specifications
 - **[Network Topology](CREDO_Network_Topology.md)** - Network architecture diagrams
 - **[Space Experiment](Space_Global_Model_Experiment.md)** - Space deployment experiment
