@@ -1,0 +1,32 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: credo-kibana-ingress
+  namespace: cblee-credo
+  annotations:
+    # HAProxy ingress controller annotation (legacy but still supported)
+    kubernetes.io/ingress.class: haproxy
+    # Note: NRP uses HAProxy ingress controller, not nginx
+    # SSL redirect: Redirect HTTP to HTTPS
+    haproxy.org/ssl-redirect: "true"
+    # Note: For SSL passthrough (if Kibana handles SSL), use:
+    # haproxy.org/ssl-passthrough: "true"
+spec:
+  # Modern approach: use ingressClassName (if supported by your cluster)
+  # ingressClassName: haproxy  # Uncomment if your cluster supports this
+  # TLS configuration for HTTPS
+  tls:
+  - hosts:
+    - credo-kibana.nrp-nautilus.io
+    secretName: credo-kibana-tls-secret  # TLS secret name (may need to be created by NRP admins)
+  rules:
+  - host: credo-kibana.nrp-nautilus.io
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: credo-kibana-kb-http
+            port:
+              number: 5601

@@ -84,7 +84,7 @@ credo-api-tools/
 - **Caltech:** 4 detectors, clusters 0-3 (high-energy particles)
 - **MIT:** 3 detectors, clusters 4-6 (medium-energy particles)
 - **University of Delaware:** 3 detectors, clusters 7-9 (low-energy particles)
-- **Total:** 2,354 cosmic ray images across 10 detectors
+- **Demo Dataset:** 2,354 cosmic ray images (full dataset: 50,000+ detections)
 
 ### **Collaborative Learning**
 - Model parameters exchanged via federated averaging
