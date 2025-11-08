@@ -1,56 +1,131 @@
-# CREDO Federated Learning Network
+# CREDO API Tools
 
-A distributed cosmic ray detection network using federated learning to enable collaborative machine learning across multiple institutions without sharing raw data.
+Tools for collecting, processing, and visualizing cosmic ray detection data from CREDO.science and CosmicWatch Desktop Muon Detector v3X.
 
 ## Project Overview
 
-**Purpose:** Propose a federated learning demonstration for cosmic ray image classification across Caltech, MIT, and University of Delaware.
+**Purpose:** Collect and visualize real-time cosmic ray detection data from multiple sources including CREDO.science API and CosmicWatch Desktop Muon Detector v3X devices.
 
-**Key Innovation:** Institutions would collaborate to build a comprehensive global model while maintaining data sovereignty.
+**Key Features:**
+- Real-time data streaming from CosmicWatch detectors
+- CREDO.science API data import
+- Elasticsearch data storage and indexing
+- Kibana visualization dashboard
+- Public access to Kibana dashboard for real-time monitoring
 
 ## Quick Start
 
 ### Prerequisites
 - Python 3.8+
-- TensorFlow 2.x
-- Kubernetes cluster access (for deployment)
+- Kubernetes cluster access (NRP Nautilus)
+- `kubectl` configured for NRP cluster
+- Elasticsearch and Kibana deployed in Kubernetes
 
 ### Local Development
+
+#### Clone the Repository
 ```bash
-# Clone the repository
 git clone https://github.com/carlynlee/credo-api-tools.git
 cd credo-api-tools
 
-# Install dependencies
-pip install -r scripts_example/requirements.txt
+# Initialize submodules (CosmicWatch detector scripts)
+git submodule update --init --recursive
+```
 
-# Run the simple demo
-python scripts_example/SC25_Simple_Demo.py
+#### Install Dependencies
+```bash
+# For data export/import
+pip install requests elasticsearch pyserial
+
+# Or install from requirements if available
+pip install -r requirements.txt
+```
+
+### CosmicWatch Data Collection
+
+#### Stream Data to Elasticsearch
+```bash
+# Set up port-forward to Elasticsearch
+kubectl port-forward -n cblee-credo svc/credo-elasticsearch-service 9200:9200 &
+
+# Set environment variables
+export ES_HOST="https://localhost:9200"
+export ES_USER="elastic"
+export ES_PASS="your-elasticsearch-password"
+export ES_INDEX="credo-detections"
+export ES_ENABLED="true"
+
+# Run the CosmicWatch data import script
+cd CosmicWatch-Desktop-Muon-Detector-v3X/Data
+python3 import_data_to_elasticsearch.py
+```
+
+See [CosmicWatch-Desktop-Muon-Detector-v3X/Data/README.txt](CosmicWatch-Desktop-Muon-Detector-v3X/Data/README.txt) for detailed instructions.
+
+### CREDO.science Data Import
+
+#### Export Data from CREDO.science API
+```bash
+cd data-exporter
+python3 credo-data-exporter.py \
+  --username your-username \
+  --password your-password \
+  --endpoint https://api.credo.science/api/v2 \
+  --dir ../credo-data-export
+```
+
+#### Process and Index to Elasticsearch
+```bash
+cd data-processor
+python3 credo-data-processor.py \
+  --dir ../credo-data-export \
+  --plugin-dir plugins
 ```
 
 ### Kubernetes Deployment
 
-#### Three-Pod System (Recommended)
+#### Deploy CREDO Data Streaming
 ```bash
-# Deploy the complete three-pod system
-./deploy/01-deploy-credo-system.sh
+# Deploy the data streaming cronjob
+./deploy/06-deploy-credo-data-stream.sh
 
-# Check system status
-./deploy/02-status.sh all
-
-# Access the system
-kubectl port-forward -n cblee-credo svc/credo-caltech-server-service 8888:8888
-kubectl port-forward -n cblee-credo svc/caltech-fl-server-service 5000:5000
-kubectl port-forward -n cblee-credo svc/credo-elasticsearch-service 9200:9200
+# Check deployment status
+kubectl get cronjob -n cblee-credo
+kubectl get pods -n cblee-credo
 ```
 
-#### Legacy Deployment
+#### Access Elasticsearch
 ```bash
-# Access the deployed pod
-kubectl exec -n cblee-credo credo-image-clustering-cpu-7787846784-qmrqf -- bash
+# Port-forward Elasticsearch
+kubectl port-forward -n cblee-credo svc/credo-elasticsearch-service 9200:9200
 
-# Run the multi-institution demo
-python /data/scripts_example/federated_learning_multi_institution_demo.py
+# Query Elasticsearch
+curl -k -u "elastic:password" https://localhost:9200/credo-detections/_count
+```
+
+#### Access Kibana Dashboard
+
+**Public Access (Recommended):**
+- URL: https://credo-kibana.nrp-nautilus.io
+- Username: `elastic`
+- Password: (check Kubernetes secret: `credo-elasticsearch-es-elastic-user`)
+
+**Local Access (via port-forward):**
+```bash
+# Port-forward Kibana
+kubectl port-forward -n cblee-credo svc/credo-kibana-kb-http 5601:5601
+
+# Open in browser
+open http://localhost:5601
+```
+
+#### Deploy Public Kibana Access
+```bash
+# Apply Ingress configuration
+kubectl apply -f kibana-public-ingress.yaml
+
+# Apply certificate configuration (if using cert-manager)
+kubectl apply -f kibana-certificate.yaml
 ```
 
 ## Project Structure
@@ -58,107 +133,147 @@ python /data/scripts_example/federated_learning_multi_institution_demo.py
 ```
 credo-api-tools/
 ├── README.md                                    # This file
-├── Space_Global_Model_Experiment.md             # Space deployment experiment
-├── SC25_NRE_Network_Requirements_CREDO.md      # Network requirements
-├── CREDO_Network_Topology.md                   # Network architecture
-├── deploy/                                     # Deployment scripts for three-pod system
-│   ├── CREDO_THREE_POD_SYSTEM.md              # Deployment documentation
-│   ├── 00-cleanup-existing.sh                 # Cleanup script
-│   ├── 01-deploy-credo-system.sh              # Main deployment script
-│   ├── 02-status.sh                           # Status and monitoring
-│   └── 03-data-management.sh                  # Data management
-├── scripts_example/                            # Demo scripts and data
-│   ├── README.md                              # Script documentation
-│   ├── SC25_Simple_Demo.py                    # Easy demo script
-│   ├── federated_learning_multi_institution_demo.py
-│   ├── cluster_local_images.py                # Data preparation
-│   ├── analyze_device_ids.py                  # Device analysis
-│   └── visualize_cluster_samples.py           # Visualization
-├── data-exporter/                             # Data export tools
-└── data-processor/                            # Data processing tools
+├── kibana-public-ingress.yaml                   # Kibana public access configuration
+├── kibana-certificate.yaml                      # TLS certificate configuration
+├── deploy/                                      # Deployment scripts
+│   ├── 06-deploy-credo-data-stream.sh          # Deploy data streaming cronjob
+│   ├── credo-data-indexing-helpers.sh          # Helper scripts for data indexing
+│   ├── credo-data-stream-cronjob.yaml          # Kubernetes cronjob for data streaming
+│   └── setup-kibana-geo-visualization.py       # Kibana geo-visualization setup
+├── CosmicWatch-Desktop-Muon-Detector-v3X/       # CosmicWatch detector submodule
+│   └── Data/
+│       ├── import_data_to_elasticsearch.py     # Real-time data import script
+│       └── README.txt                          # CosmicWatch data import documentation
+├── data-exporter/                               # CREDO.science API export tools
+│   └── credo-data-exporter.py                   # Export data from CREDO.science API
+└── data-processor/                              # Data processing and indexing
+    ├── credo-data-processor.py                  # Process exported data
+    └── plugins/
+        └── export_to_elasticsearch.py           # Elasticsearch export plugin
 ```
 
 ## Core Capabilities
 
-### **Multi-Institution Federated Learning**
-- **Caltech:** 4 detectors, clusters 0-3 (high-energy particles)
-- **MIT:** 3 detectors, clusters 4-6 (medium-energy particles)
-- **University of Delaware:** 3 detectors, clusters 7-9 (low-energy particles)
-- **Demo Dataset:** 2,354 cosmic ray images (full dataset: 50,000+ detections)
+### **Real-Time Data Collection**
+- **CosmicWatch Desktop Muon Detector v3X:** Stream real-time detection events from hardware detectors
+- **CREDO.science API:** Import historical and real-time data from the CREDO.science platform
+- **Multiple Data Sources:** Combine data from different sources in a unified Elasticsearch index
 
-### **Collaborative Learning**
-- Model parameters exchanged via federated averaging
-- Each institution maintains data sovereignty
-- Global model combines knowledge from all institutions
-- Collaborative scientific discovery across institutions
+### **Data Storage and Indexing**
+- **Elasticsearch:** Centralized data storage with full-text search capabilities
+- **Index Pattern:** `credo-detections` for all cosmic ray detection data
+- **Source Tagging:** Data tagged by source (`cosmicwatch-v3x`, `legacy`, etc.)
+- **Time-series Data:** Optimized for time-based queries and visualizations
 
-### **Real-Time Classification**
-- ResNet50 for feature extraction
-- K-means clustering for particle pattern grouping
-- 10 distinct cosmic ray pattern clusters
-- Real-time classification of new particles
+### **Data Visualization**
+- **Kibana Dashboard:** Interactive visualization and analysis
+- **Public Access:** Accessible at https://credo-kibana.nrp-nautilus.io
+- **Real-Time Updates:** Auto-refresh for live data monitoring
+- **Geo-Visualization:** Geographic mapping of detection events
+- **Custom Dashboards:** Create custom visualizations for analysis
 
-## Space Deployment Experiment
+### **CosmicWatch Data Fields**
+- Event number, device ID, detector name
+- ADC values, SiPM voltage
+- Coincidence detection flags
+- Temperature, pressure
+- Accelerometer and gyroscope data
+- Timestamps for time-series analysis
 
-The project includes a comprehensive space deployment experiment showing how the global model can be deployed to satellites for autonomous cosmic ray classification in space.
+## Data Access
 
-See [`Space_Global_Model_Experiment.md`](Space_Global_Model_Experiment.md) for detailed diagrams and specifications.
+### **Kibana Dashboard**
+Access the public Kibana dashboard at: https://credo-kibana.nrp-nautilus.io
 
-## Demo Results
+**Login Credentials:**
+- Username: `elastic`
+- Password: (retrieve from Kubernetes secret)
 
-### **Federated Learning Performance**
-- **Round 1:** All institutions achieve >96% accuracy
-- **Round 5:** Final evaluation shows collaborative improvement
-- **Privacy:** Zero raw data shared between institutions
-- **Scalability:** Successfully handles 3 institutions, 10 detectors
+**Viewing CosmicWatch Data:**
+1. Navigate to Discover
+2. Select index pattern: `credo-detections*`
+3. Add filter: `source: cosmicwatch-v3x`
+4. Enable auto-refresh for real-time updates
 
-### **Classification Coverage**
-- **Global Model:** Can classify all particle types (0-9)
-- **Institution Specialization:** Each institution excels at local particle types
-- **Combined Knowledge:** Global model has comprehensive expertise
+**Viewing CREDO.science Data:**
+1. Navigate to Discover
+2. Select index pattern: `credo-detections*`
+3. Expand time range to 2017-2018
+4. Add filter: `source: legacy`
+
+### **Elasticsearch API**
+Query Elasticsearch directly via API:
+
+```bash
+# Count CosmicWatch documents
+curl -k -u "elastic:password" \
+  https://localhost:9200/credo-detections/_count \
+  -H "Content-Type: application/json" \
+  -d '{"query": {"term": {"source": "cosmicwatch-v3x"}}}'
+
+# Get latest detections
+curl -k -u "elastic:password" \
+  https://localhost:9200/credo-detections/_search \
+  -H "Content-Type: application/json" \
+  -d '{
+    "query": {"term": {"source": "cosmicwatch-v3x"}},
+    "sort": [{"timestamp": {"order": "desc"}}],
+    "size": 10
+  }'
+```
 
 ## Technical Architecture
 
-### **Network Requirements**
-- **Bandwidth:** 10 Gbps for real-time data transmission
-- **Latency:** <50ms for federated learning coordination
-- **Protocols:** IPv6, Layer 2/3 switching
-- **Security:** Encrypted model parameter exchange
+### **Infrastructure**
+- **Kubernetes Cluster:** NRP Nautilus
+- **Namespace:** `cblee-credo`
+- **Elasticsearch:** Centralized data storage and indexing
+- **Kibana:** Visualization and dashboard platform
+- **Ingress:** HAProxy Ingress Controller for public access
+- **TLS:** cert-manager for automatic certificate management
 
-### **Compute Requirements**
-- **GPU Nodes:** H100 SXM for model training
-- **CPU Nodes:** For data preprocessing and clustering
-- **Storage:** NVMe for high-speed data access
-- **Memory:** 32GB+ for large model training
+### **Data Flow**
+1. **CosmicWatch Detectors** → Serial connection → `import_data_to_elasticsearch.py` → Elasticsearch
+2. **CREDO.science API** → `credo-data-exporter.py` → JSON files → `credo-data-processor.py` → Elasticsearch
+3. **Elasticsearch** → Kibana → Public dashboard (https://credo-kibana.nrp-nautilus.io)
 
-## 📚 Documentation
+### **Deployment Components**
+- **Elasticsearch Service:** `credo-elasticsearch-service` (port 9200)
+- **Kibana Service:** `credo-kibana-kb-http` (port 5601)
+- **Data Streaming CronJob:** Scheduled data import from CREDO.science API
+- **Public Ingress:** Exposes Kibana at `credo-kibana.nrp-nautilus.io`
 
-- **[Deployment Scripts](deploy/CREDO_THREE_POD_SYSTEM.md)** - Complete deployment guide for three-pod system
-- **[Network Requirements](SC25_NRE_Network_Requirements_CREDO.md)** - Detailed network specifications
-- **[Network Topology](CREDO_Network_Topology.md)** - Network architecture diagrams
-- **[Space Experiment](Space_Global_Model_Experiment.md)** - Space deployment experiment
-- **[Scripts Documentation](scripts_example/README.md)** - Demo scripts guide
+## Documentation
+
+- **[CosmicWatch Data Import](CosmicWatch-Desktop-Muon-Detector-v3X/Data/README.txt)** - Detailed guide for importing CosmicWatch detector data
+- **[Deployment Scripts](deploy/)** - Kubernetes deployment configurations and helper scripts
+- **[Kibana Configuration](kibana-public-ingress.yaml)** - Public access configuration for Kibana
+- **[Certificate Management](kibana-certificate.yaml)** - TLS certificate configuration
 
 ## 🎪 SC25 Conference
 
-This project is proposed for demonstration at the Supercomputing Conference 2025 (SC25) Network Research Exhibit, showcasing distributed AI for scientific collaboration.
+This project is being demonstrated at the Supercomputing Conference 2025 (SC25) Network Research Exhibit, showcasing real-time cosmic ray detection data collection and visualization.
 
-### **Proposed Demo Components**
-- Multi-institution federated learning
-- Real cosmic ray data processing
-- Collaborative model sharing
-- Space deployment experiment
+### **Demo Components**
+- Real-time CosmicWatch Desktop Muon Detector v3X data streaming
+- CREDO.science API data integration
+- Public Kibana dashboard for real-time monitoring
+- Elasticsearch data storage and indexing
+- Multi-source data aggregation and visualization
 
-## 🤝 Contributing
+## Contributing
 
-This project demonstrates federated learning for scientific collaboration. For questions about the implementation or deployment, please refer to the documentation in the `scripts_example/` directory.
+This project is part of the CREDO (Cosmic-Ray Extremely Distributed Observatory) initiative. For questions about:
+- **CosmicWatch Detectors:** See [CosmicWatch-Desktop-Muon-Detector-v3X](https://github.com/carlynlee/CosmicWatch-Desktop-Muon-Detector-v3X)
+- **CREDO.science:** Visit [credo.science](https://credo.science)
+- **Deployment:** See deployment scripts in the `deploy/` directory
 
-## 📄 License
+## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ---
 
-**Project Status:** Proposed for SC25 demonstration  
-**Last Updated:** August 2025  
-**Focus:** Multi-institution federated learning for cosmic ray detection
+**Project Status:** Active - SC25 demonstration  
+**Last Updated:** December 2024  
+**Focus:** Real-time cosmic ray detection data collection and visualization
