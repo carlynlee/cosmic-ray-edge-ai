@@ -107,3 +107,9 @@ venv.bak/
 
 credo-data-export/
 .DS_Store
+
+# Data files (large, should not be committed)
+scripts/data/
+scripts/*.json
+!scripts/package.json
+!scripts/tsconfig.json

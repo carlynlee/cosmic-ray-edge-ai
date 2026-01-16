@@ -8,7 +8,7 @@
 
 ## Abstract
 
-We present a workflow for real-time cosmic ray detection data collection, machine learning-based event classification, and federated learning demonstration, using SCinet and National Research Platform nodes during SC25. Our system integrates CosmicWatch Desktop Muon Detector v3X hardware with a Kubernetes-based data pipeline on the NRP Nautilus infrastructure, enabling real-time data streaming, storage, and analysis. We implemented a federated learning framework for distributed model training across multiple data partitions. The system is an effort to develop a space-ready architecture suitable for edge AI deployment, with low-power detectors (0.5W), bandwidth-efficient model updates, and real-time inference capabilities. Our work explores federated learning as a possible approach for distributed cosmic ray science while addressing on-board bandwidth limitations.
+We present an early exploration of federated learning architectures for cosmic ray detection, using SCinet and National Research Platform nodes during SC25 to validate distributed training approaches and scope bandwidth requirements for multi-modal edge AI systems. Our work integrates CosmicWatch Desktop Muon Detector v3X hardware with a Kubernetes-based data pipeline on the NRP Nautilus infrastructure, enabling real-time data streaming, storage, and analysis. This work represents an initial validation of federated learning concepts for distributed cosmic ray science, with ongoing efforts to characterize bandwidth requirements for multi-modal data (images and sensor sequences) from edge devices including smartphone applications and low-power detectors (0.5W).
 
 **Keywords:** Federated Learning, Cosmic Ray Detection, Real-Time Data Processing, Edge AI, Distributed Machine Learning, SCinet, National Research Platform
 
@@ -20,7 +20,7 @@ We present a workflow for real-time cosmic ray detection data collection, machin
 
 Cosmic ray detection and analysis is a critical area of particle physics research, with applications ranging from fundamental physics to space weather monitoring.  However, traditional centralized approaches to data analysis face challenges including data sovereignty concerns, bandwidth limitations, and the need for real-time processing at the edge. The CREDO (Cosmic-Ray Extremely Distributed Observatory) initiative aims to create a global network of cosmic ray detectors, enabling distributed data collection and collaborative scientific discovery. This global network is largely powered by citizen science using the CREDO smartphone application, which turns standard mobile devices into basic cosmic ray detectors. These distributed data sources collect detection events that are then aggregated and used in various machine learning and distributed computing demonstrations.
 
-Last year, we conducted an initial exploration into automated cosmic ray event classification using K-means clustering on data sourced from the CREDO smartphone application. This dataset, collected between 2018 and 2019, comprised tens of thousands of detection events from over 50 unique smartphone devices. By applying K-means clustering to features extracted using a pre-trained ResNet50 model, we were able to identify 10 distinct clusters, each representing a potential cosmic ray particle type. This work provided the motivation and initial strategy that laid the groundwork for the current project's shift to a more distributed approach using federated learning.
+For SC'24, we conducted an initial exploration into automated cosmic ray event classification using K-means clustering on data sourced from the CREDO project. This dataset, collected between 2018 and 2019, comprised tens of thousands of detection events from over 50 unique smartphone devices. The clustering was performed solely on the image pixel data from the `frame_content` field—small 20×20 pixel regions extracted from smartphone camera frames—with no additional metadata or features used. By applying K-means clustering to features extracted from these images using a pre-trained ResNet50 model, we were able to identify 10 distinct clusters, some representing potential cosmic ray particle patterns (dot-like, 'worms' or lines, diffuse patterns) while others contained artifacts or noise. This work provided the motivation and initial strategy that laid the groundwork for the current project's shift to a more distributed approach using federated learning. However, as discussed in Section 4.1, the k-means clustering approach has fundamental scalability limitations that motivated our transition to transformer-based self-supervised learning methods.
 
 
 ![Figure 1: Cosmic-Ray Extremely Distributed Observatory CREDO.science](../docs/figs/fig1.png)
@@ -31,23 +31,24 @@ Figure 1: The CREDO (Cosmic-Ray Extremely Distributed Observatory) smartphone ap
 
 ![Figure 2: Kmeans Clustering](../docs/figs/fig2.png)
 
-Figure 2: K-means clustering of CREDO smartphone data (2018-2019) on ResNet50 features, identifying 10 potential cosmic ray particle types. This work laid the foundation for the current federated learning exploration.
+Figure 2: K-means clustering of CREDO smartphone data (2018-2019) on ResNet50 features, identifying 10 distinct clusters including both potential cosmic ray particle patterns and artifacts/noise. This work laid the foundation for the current federated learning exploration.
 
 
 ![Figure 3: Kmeans Clustering Images](../docs/figs/fig3.png)
 
-Figure 3: Initial clustering reveals distinct types of images.
-Detections are categorized by visual forms like dot-like, 'worms' or lines, and diffuse patterns. The classifier also isolated clusters of artifacts or noise. Omitting noise can improve bandwidth efficiency for resource-constrained systems. The next challenge aims to extend the classification with federated learning.
+Figure 3: Initial clustering reveals distinct types of images from the `frame_content` field of CREDO data. Detections are categorized by visual forms like dot-like, 'worms' or lines, and diffuse patterns. The classifier also isolated clusters of artifacts or noise. Omitting noise can improve bandwidth efficiency for resource-constrained systems. The next challenge aims to extend the classification with federated learning.
 
 ### 1.2 Motivation
 
-The SCinet Network Research Exhibition at SC25, SCinet network infrastructure, and National Research Platform (NRP) nodes provided an opportunity to demonstrate an end-to-end workflow that addresses these challenges through:
+Prior to the SC25 demonstration, we conducted an initial federated learning experiment on the NRP Nautilus infrastructure. This experiment leveraged the k-means clustering results from CREDO images (described in Section 1.1) to partition data across three remote pods deployed on NRP Nautilus. The federated learning scripts were executed across these distributed nodes, enabling distributed model training. We validated the federated learning results, and saw successful model aggregation and convergence across the distributed nodes. This experiment validated the feasibility of federated learning for image classification in a distributed computing environment.
 
-1. Real-time data collection from hardware detectors with sub-second indexing
-2. Machine learning-based classification for automatic event categorization
-3. Federated learning for distributed model training without data sharing, exploring architectural concepts toward future space-based deployments that address on-board bandwidth limitations
+The SCinet Network Research Exhibition at SC25 provided additional infrastructure (SCinet network, Caltech booth nodes) that enabled quick deployment and demonstration of the system. The availability of these nodes allowed us to rapidly run experiments and showcase the federated learning architecture in a live exhibition setting. Our SC25 exploration focused on:
 
-Prior to the SC25 demonstration, we conducted an initial federated learning experiment on the NRP Nautilus infrastructure. This experiment leveraged the k-means clustering results from CREDO images (described in Section 1.1) to partition data across three remote pods deployed on NRP Nautilus. The federated learning scripts were executed across these distributed nodes, enabling distributed model training. We validated the federated learning results, and saw successful model aggregation and convergence across the distributed nodes. This experiment validated the feasibility of federated learning for image classification in a distributed computing environment and informed the design of the SC25 demonstration system.
+1. **Real-time Data Collection:** Real-time data collection from hardware detectors with sub-second indexing, leveraging the Kubernetes-based data pipeline on NRP Nautilus infrastructure
+2. **Machine Learning and Federated Learning:** Machine learning-based classification for automatic event categorization, combined with federated learning for distributed model training without data sharing, exploring architectural concepts toward future space-based deployments that address on-board bandwidth limitations
+3. **Distributed System Deployment:** Deployment of the exploration to a distributed computing environment using NRP Nautilus Kubernetes infrastructure, demonstrating the portability and scalability of the federated learning architecture across multiple nodes
+
+However, this work represents early exploration, and we identified that the k-means clustering approach does not scale effectively (see Section 4.1).
 
 ![Figure 4: Federated Learning Validation Results](../docs/figs/fig4.png)
 
@@ -239,7 +240,7 @@ Elasticsearch (NRP Kubernetes)
 
 ## 4. Machine Learning Models
 
-The SC25 demonstration included two machine learning models for different classification tasks:
+The SC25 demonstration included two machine learning models for different classification tasks. This section describes the initial approaches used for validation, followed by a discussion of scalability limitations and our transition to transformer-based self-supervised learning methods.
 
 ### 4.1 CREDO Image Classification Model (Demo 1)
 
@@ -271,8 +272,20 @@ Output Layer (10 neurons, Softmax)
 
 **SC25 Results:**
 - One federated learning round completed successfully
-- Accuracy: ~95% across all three institutional clients (Caltech, MIT, UDel)
+- Accuracy: ~95% across all three clients
 - Model trained on partitioned data: Client 1 (clusters 0-3), Client 2 (clusters 4-6), Client 3 (clusters 7-9)
+
+**K-Means Clustering Scalability and Limitations:**
+
+While the k-means clustering approach successfully validated the federated learning architecture, it has fundamental limitations that prevent it from scaling effectively. First, k-means requires pre-specifying the number of clusters (k=10 in our case), which assumes a priori knowledge of the number of distinct cosmic ray particle types. However, the true number of particle types is unknown and may vary with detector characteristics, new particle types cannot be discovered without re-clustering the entire dataset, and the approach cannot adapt to evolving data distributions.
+
+Second, the ResNet50 feature extraction followed by k-means operates in a fixed feature space optimized for natural images, not cosmic ray physics. The clustering was performed only on image pixel data from the `frame_content` field (20×20 pixel regions), with no additional metadata, timestamps, location information, or sensor data used. This means the features may not capture physics-relevant patterns such as energy spectra, track morphology, or temporal correlations. There is no mechanism to learn domain-specific representations, and the approach has limited ability to incorporate multi-modal information (images + sensor data).
+
+Third, k-means produces hard cluster assignments without uncertainty quantification. It cannot handle ambiguous or borderline cases, provides no probabilistic interpretation of cluster membership, and is difficult to incorporate into downstream physics analysis.
+
+Finally, when applied to federated learning, k-means clustering introduces additional complications. Cluster centers must be synchronized across nodes, requiring full feature space communication. Non-IID data distributions across nodes can lead to inconsistent cluster definitions, and the approach does not leverage the benefits of distributed representation learning.
+
+These limitations motivated our transition to transformer-based self-supervised learning approaches, as discussed in Section 4.3.
 
 ### 4.2 CosmicWatch Binary Classification Model (Demo 2)
 
@@ -341,6 +354,20 @@ Output Layer (1 neuron, Sigmoid)
 ![Figure XX: Training Curves](../scripts/models/training_curves.png)
 
 **Figure XX:** Training and validation loss curves for the CosmicWatch binary classification model, showing model convergence. The model achieved stopping at epoch 15, indicating convergence with the current architecture and hyperparameters.
+
+### 4.3 Transition to Transformer-Based Self-Supervised Learning
+
+We are transitioning from k-means clustering to transformer-based self-supervised learning approaches that are more suitable for our multi-modal cosmic ray detection data. This transition follows recommendations from RINO researchers (Renormalization Group Invariance with No Labels [1]).
+
+The k-means clustering limitations identified in Section 4.1, combined with the handling of multi-modal data (CREDO smartphone images and CosmicWatch sensor sequences), motivated exploration of transformer-based architectures. These approaches proposes to learn adaptive representations without fixed cluster assumptions, handle multi-modal data in a unified framework, scale to large distributed datasets, and incorporate physics-relevant patterns through self-supervised pre-training.
+
+Following recommendations from RINO researchers, we are exploring DINO (Distillation with No Labels) and DINO-v2/v3 architectures for CREDO smartphone image data. Since CREDO images are already in standard image format, vision transformers are directly applicable. We are using META's pre-trained DINO-v2/v3 models (facebook/dinov2-base, dinov2-large, dinov2-giant), which leverage pre-trained models trained on large natural image datasets. These models can learn general visual features (edges, textures, patterns) that transfer to cosmic ray images, and fine-tuning adapts these general features to cosmic ray-specific patterns. An initial implementation is complete, and we are currently validating functionality. This approach has the advantage of not requiring adaptation of particle physics frameworks designed for momentum space.
+
+For CosmicWatch detector data, we are exploring BERT/GPT-style transformer models. Since timestamps are essential and the data consists of irregularly sampled event sequences, we "tokenize" each event as a token and learn contextual embeddings based on preceding and succeeding events. This approach seems appropriate for sequential event data with temporal dependencies, can learn contextual relationships between events, and handles irregular sampling naturally through sequence modeling. An initial implementation is currently being tested for masked event modeling pre-training.
+
+We are also exploring multi-modal fusion architectures that combine both data types. The architecture consists of an image encoder (DINO) and an event encoder (BERT) feeding into a fusion layer that produces a unified embedding space. Our implementation attempts to achieve a high-confidence event identification requiring agreement across both modalities, cross-modal validation using image features to validate event sequences, and unified representation enabling joint reasoning.
+
+Current implementation status includes DINO for CREDO images and BERT/GPT for CosmicWatch sequences, both of which are currently being validated for functionality. The multi-modal fusion architecture is also implemented and under exploration. Qualcomm QAIC deployment is pending, waiting on new fiber for the 400Gbps NIC.
 
 ---
 
@@ -426,7 +453,7 @@ Unlike the CREDO smartphone app FL demonstration which used multiple NRP pods as
 
 ---
 
-## 7. Network Resource Usage
+## 7. Network Resource Usage and Bandwidth Requirements Scoping
 
 ### 7.1 SCinet and NRP Infrastructure Utilization
 
@@ -441,6 +468,14 @@ Unlike the CREDO smartphone app FL demonstration which used multiple NRP pods as
 - Federated learning parameter exchange (model updates ~100KB per round vs GB of raw data)
 - Public access to Kibana dashboard via HAProxy Ingress Controller
 
+### 7.2 Bandwidth Requirements Scoping for Multi-Modal Edge AI
+
+A key focus of this work is scoping bandwidth requirements for science use-cases involving multi-modal data from edge devices. Our system includes two primary data sources with distinct characteristics. CREDO smartphone images consist of 20×20 pixel regions (PNG, RGBA format) extracted from 960×720 frames, with variable collection rates depending on smartphone app usage. We have approximately 369,804 documents in Elasticsearch with the `frame_content` field. Bandwidth considerations for these images include compression strategies and selective transmission of high-confidence events. CosmicWatch sensor sequences contain ADC values, SiPM voltage, temperature, pressure, accelerometer, and gyroscope readings, with continuous collection at sub-second indexing rates. We collected 40,207 events over approximately 2 days. The sequential nature of this event data and temporal correlations guide compression strategies.
+
+We are evaluating several bandwidth efficiency strategies. Federated learning parameter exchange transmits model updates of approximately 100KB per round compared to gigabytes of raw data, achieving approximately 98.8% bandwidth reduction compared to centralized approaches. This is critical for space-based deployments with limited on-board bandwidth. Selective data transmission filters noise and artifacts identified by clustering (k-means) or classification models, transmitting only high-confidence events or model updates to reduce bandwidth requirements for resource-constrained systems. Multi-modal compression leverages cross-modal validation to reduce false positives, transmitting only events with high cross-modal agreement. The unified embedding space enables efficient representation of multi-modal data.
+
+Ongoing work includes characterizing bandwidth requirements for transformer-based models (DINO, BERT) in federated learning settings, evaluating compression strategies for multi-modal data, scoping requirements for Qualcomm QAIC deployment (400Gbps NIC pending), and exploring edge AI inference to reduce upstream bandwidth needs.
+
 ---
 
 ## 8. Toward Space-Ready Architecture
@@ -451,7 +486,13 @@ This work explores architectural concepts toward space deployment, addressing co
 
 ## 9. Conclusion
 
-We demonstrated an end-to-end workflow for real-time cosmic ray detection data collection, machine learning-based event classification, and federated learning at the SCinet Network Research Exhibition during SC25. This work explores federated learning as a viable approach for distributed cosmic ray science while addressing on-board bandwidth limitations. While this work explores architectural concepts toward space deployment, significant additional development is needed before this system is truly space-ready, including more sophisticated analysis techniques and logic to align model predictions with theoretical physics expectations.
+We conducted an early exploration of federated learning architectures for cosmic ray detection using SCinet and National Research Platform infrastructure during SC25. This work validated a simple k-means clustering approach with federated learning, successfully demonstrating proof-of-concept distributed training across multiple NRP nodes. However, we identified fundamental scalability limitations of the k-means approach, including fixed cluster assumptions, feature space limitations, and challenges in multi-modal settings.
+
+This exploration motivated our transition to transformer-based self-supervised learning approaches, following recommendations from the RINO team. We are currently exploring DINO architectures for CREDO images, BERT/GPT models for CosmicWatch event sequences, and multi-modal fusion combining both modalities. These approaches address the scalability limitations of k-means while enabling adaptive representation learning and multi-modal data integration.
+
+A key focus of this work is scoping bandwidth requirements for multi-modal edge AI systems, critical for future space-based deployments. We characterized data transmission patterns and evaluated bandwidth efficiency strategies, including federated learning parameter exchange (~100KB per round vs GB of raw data) and selective data transmission based on model confidence.
+
+This work represents initial validation and exploration rather than a complete system. Significant additional development planned, including validation of transformer-based approaches, comprehensive bandwidth characterization, and alignment of model predictions with theoretical physics expectations. The SC25 demonstration provided valuable infrastructure for rapid validation and data exploration, enabling iterative development toward more scalable architectures.
 
 ---
 
@@ -467,13 +508,16 @@ We thank:
 
 ## References
 
-1. CREDO (Cosmic-Ray Extremely Distributed Observatory). https://credo.science
-2. CosmicWatch Desktop Muon Detector. https://github.com/spenceraxani/CosmicWatch-Desktop-Muon-Detector
-3. McMahan, B., et al. "Communication-Efficient Learning of Deep Networks from Decentralized Data." AISTATS, 2017.
-4. NRP Nautilus. https://nautilus-optiputer.net
-5. Elasticsearch. https://www.elastic.co/elasticsearch
-6. Kibana. https://www.elastic.co/kibana
-7. Kubernetes. https://kubernetes.io
+1. Zichun et al. "Renormalization Group Invariance with No Labels." arXiv:2509.07486, 2025.
+2. CREDO (Cosmic-Ray Extremely Distributed Observatory). https://credo.science
+3. CosmicWatch Desktop Muon Detector. https://github.com/spenceraxani/CosmicWatch-Desktop-Muon-Detector
+4. McMahan, B., et al. "Communication-Efficient Learning of Deep Networks from Decentralized Data." AISTATS, 2017.
+5. NRP Nautilus. https://nautilus-optiputer.net
+6. Elasticsearch. https://www.elastic.co/elasticsearch
+7. Kibana. https://www.elastic.co/kibana
+8. Kubernetes. https://kubernetes.io
+9. DINO-v2. https://dinov2.metademolab.com/
+10. DINO-v3. https://ai.meta.com/dinov3/
 
 ---
 

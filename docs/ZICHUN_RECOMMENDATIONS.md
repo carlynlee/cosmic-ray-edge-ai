@@ -101,3 +101,5 @@ Based on correspondence with Zichun (RINO author), here are the recommended appr
 2. **Complete BERT pre-training** for CosmicWatch sequences
 3. **Design multi-modal fusion architecture**
 4. **Evaluate and compare** with baseline models
+
+

@@ -4,14 +4,21 @@ Tools for collecting, processing, and visualizing cosmic ray detection data from
 
 ## Project Overview
 
-**Purpose:** Collect and visualize real-time cosmic ray detection data from multiple sources including CREDO.science API and CosmicWatch Desktop Muon Detector v3X devices.
+**Purpose:** Collect, analyze, and classify cosmic ray detection data using AI/ML, with real-time data streaming from CREDO.science API and CosmicWatch Desktop Muon Detector v3X devices. This project demonstrates federated learning for cosmic ray event classification in preparation for SC25 and space-based deployment.
 
 **Key Features:**
 - Real-time data streaming from CosmicWatch detectors
 - CREDO.science API data import
 - Elasticsearch data storage and indexing
-- Kibana visualization dashboard
+- Kibana visualization dashboard with Machine Learning capabilities
 - Public access to Kibana dashboard for real-time monitoring
+- **Machine Learning:** Baseline models for cosmic ray event classification
+- **Data Analysis:** Analysis and data partitioning for federated learning
+- **Federated Learning:** Distributed model training across multiple data nodes (complete)
+- **RINO Integration:** Transformer-based self-supervised learning based on Zichun's recommendations (NEW)
+  - **CREDO Images:** DINO-v2/v3 vision transformers (see `credo/` module)
+  - **CosmicWatch Events:** BERT/GPT-style transformers (see `cosmicwatch/` module)
+  - **Multi-Modal Fusion:** Unified embedding space (see `multimodal/` module)
 
 ## Quick Start
 
@@ -37,8 +44,15 @@ git submodule update --init --recursive
 # For data export/import
 pip install requests elasticsearch pyserial
 
-# Or install from requirements if available
+# For machine learning and analysis
+pip install torch pandas numpy scikit-learn matplotlib
+
+# For transformers (BERT/GPT for events, DINO for images)
+pip install transformers torchvision Pillow
+
+# Or install from requirements
 pip install -r requirements.txt
+pip install -r scripts/requirements.txt  # Includes transformers and vision libraries
 ```
 
 ### CosmicWatch Data Collection
@@ -133,6 +147,7 @@ kubectl apply -f kibana-certificate.yaml
 ```
 credo-api-tools/
 ├── README.md                                    # This file
+├── RINO_INTEGRATION.md                          # RINO integration guide (NEW)
 ├── kibana-public-ingress.yaml                   # Kibana public access configuration
 ├── kibana-certificate.yaml                      # TLS certificate configuration
 ├── deploy/                                      # Deployment scripts
@@ -144,12 +159,57 @@ credo-api-tools/
 │   └── Data/
 │       ├── import_data_to_elasticsearch.py     # Real-time data import script
 │       └── README.txt                          # CosmicWatch data import documentation
+├── cosmicwatch/                                 # CosmicWatch module (BERT/GPT for events)
+│   ├── __init__.py                              # Module exports
+│   ├── README.md                                # Module documentation
+│   ├── dataloader/                              # Data loading
+│   │   ├── dataset.py                           # Sequence dataset
+│   │   └── loader.py                            # Load from JSON/Elasticsearch
+│   ├── preprocess/                              # Preprocessing
+│   │   └── sequences.py                         # Event sequence creation
+│   ├── utils/                                   # Utilities
+│   │   └── conversion.py                        # Format conversion
+│   └── examples/                                # Example scripts
+│       └── example_rino_integration.py          # Integration examples
+├── credo/                                       # CREDO image module (DINO-v2/v3) (NEW)
+│   ├── __init__.py                              # Module exports
+│   ├── README.md                                # Module documentation
+│   ├── dataloader/                              # Data loading
+│   │   ├── dataset.py                           # Image dataset
+│   │   └── loader.py                            # Load from JSON/Elasticsearch
+│   ├── models/                                  # Models
+│   │   └── dino.py                              # DINOImageEncoder
+│   └── examples/                                # Example scripts
+│       └── example_dino_usage.py               # DINO usage examples
+├── multimodal/                                  # Multi-modal fusion (NEW)
+│   ├── __init__.py                              # Module exports
+│   ├── README.md                                # Module documentation
+│   ├── fusion.py                                # MultiModalFusion class
+│   └── examples/                                # Example scripts
+│       └── example_multimodal.py                # Multi-modal examples
+├── RINO/                                        # RINO repository (cloned)
+│   └── ...                                      # RINO codebase
 ├── data-exporter/                               # CREDO.science API export tools
 │   └── credo-data-exporter.py                   # Export data from CREDO.science API
 └── data-processor/                              # Data processing and indexing
     ├── credo-data-processor.py                  # Process exported data
     └── plugins/
         └── export_to_elasticsearch.py           # Elasticsearch export plugin
+├── scripts/                                      # Data analysis and ML scripts
+    ├── export_cosmicwatch_data.py               # Export data from Elasticsearch
+    ├── analyze_and_partition_data.py            # Analyze and partition data for FL
+    ├── analysis.py                              # Scientific data analysis
+    ├── train_binary_baseline.py                 # Train baseline ML model
+    ├── train_baseline_model.py                 # Train multi-class model (legacy)
+    ├── evaluate_and_tune_threshold.py          # Model evaluation and tuning
+    ├── models/                                  # Trained model checkpoints
+    └── data/                                    # Data exports and partitions
+└── docs/                                        # Project documentation
+    ├── SC25_8_DAY_REALISTIC_PLAN.md            # SC25 demonstration plan
+    ├── BASELINE_MODEL_DESIGN.md                # ML model design document
+    ├── FEDERATED_LEARNING_ROADMAP.md           # Federated learning strategy
+    ├── day1-2_checklist.md                     # Day 1-2 completion summary
+    └── DAY3-4_SUMMARY.md                       # Day 3-4 completion summary
 ```
 
 ## Core Capabilities
@@ -171,6 +231,19 @@ credo-api-tools/
 - **Real-Time Updates:** Auto-refresh for live data monitoring
 - **Geo-Visualization:** Geographic mapping of detection events
 - **Custom Dashboards:** Create custom visualizations for analysis
+- **Machine Learning:** Kibana ML features for anomaly detection and classification
+
+### **Data Analysis and Machine Learning**
+- **Scientific Analysis:** Energy spectrum, coincidence rate, environmental correlations, temporal patterns
+- **Data Partitioning:** Partition data for federated learning (coincidence vs non-coincidence events)
+- **Baseline Models:** Binary classification models for coincidence event prediction
+- **Model Evaluation:** Performance metrics, threshold tuning, physics validation
+- **Federated Learning:** Distributed model training across multiple data nodes (complete)
+- **RINO Integration:** Transformer-based self-supervised learning based on Zichun's recommendations (NEW)
+  - **CREDO Images:** DINO-v2/v3 vision transformers for cosmic ray images
+  - **CosmicWatch Events:** BERT/GPT-style transformers for sequential event data
+  - **Multi-Modal Fusion:** Unified embedding space combining images and events
+  - See `docs/ZICHUN_RECOMMENDATIONS.md`, `credo/README.md`, `cosmicwatch/README.md`, and `multimodal/README.md` for details
 
 ### **CosmicWatch Data Fields**
 - Event number, device ID, detector name
@@ -236,6 +309,9 @@ curl -k -u "elastic:password" \
 1. **CosmicWatch Detectors** → Serial connection → `import_data_to_elasticsearch.py` → Elasticsearch
 2. **CREDO.science API** → `credo-data-exporter.py` → JSON files → `credo-data-processor.py` → Elasticsearch
 3. **Elasticsearch** → Kibana → Public dashboard (https://credo-kibana.nrp-nautilus.io)
+4. **Data Analysis:** Elasticsearch → `export_cosmicwatch_data.py` → `analyze_and_partition_data.py` → Training datasets
+5. **Model Training:** Training datasets → `train_binary_baseline.py` → Trained models
+6. **Federated Learning:** Multiple nodes → FL server → Aggregated model (complete)
 
 ### **Deployment Components**
 - **Elasticsearch Service:** `credo-elasticsearch-service` (port 9200)
@@ -245,10 +321,30 @@ curl -k -u "elastic:password" \
 
 ## Documentation
 
+### **Setup and Deployment**
 - **[CosmicWatch Data Import](CosmicWatch-Desktop-Muon-Detector-v3X/Data/README.txt)** - Detailed guide for importing CosmicWatch detector data
 - **[Deployment Scripts](deploy/)** - Kubernetes deployment configurations and helper scripts
 - **[Kibana Configuration](kibana-public-ingress.yaml)** - Public access configuration for Kibana
 - **[Certificate Management](kibana-certificate.yaml)** - TLS certificate configuration
+
+### **Machine Learning and Analysis**
+- **[SC25 8-Day Plan](docs/SC25_8_DAY_REALISTIC_PLAN.md)** - Complete demonstration plan for SC25
+- **[Baseline Model Design](docs/BASELINE_MODEL_DESIGN.md)** - ML model architecture and training strategy
+- **[Federated Learning Roadmap](docs/FEDERATED_LEARNING_ROADMAP.md)** - FL implementation strategy
+- **[Day 1-2 Checklist](docs/day1-2_checklist.md)** - Data collection and analysis completion
+- **[Day 3-4 Summary](docs/DAY3-4_SUMMARY.md)** - Baseline model development summary
+- **[Scripts README](scripts/README.md)** - Scripts directory documentation
+
+### **RINO Integration (NEW)**
+- **[Zichun's Recommendations](docs/ZICHUN_RECOMMENDATIONS.md)** - Summary of recommendations from RINO author
+- **[Implementation Roadmap](docs/IMPLEMENTATION_ROADMAP.md)** - Complete implementation roadmap
+- **[RINO Integration Guide](RINO_INTEGRATION.md)** - Complete guide for integrating with RINO-style frameworks
+- **[CREDO Module](credo/README.md)** - DINO-v2/v3 for CREDO images
+- **[CosmicWatch Module](cosmicwatch/README.md)** - BERT/GPT for event sequences
+- **[Multi-Modal Module](multimodal/README.md)** - Fusion of images and events
+- **[Example Scripts](credo/examples/)** - CREDO image processing examples
+- **[Example Scripts](cosmicwatch/examples/)** - CosmicWatch event processing examples
+- **[Example Scripts](multimodal/examples/)** - Multi-modal fusion examples
 
 ## 🎪 SC25 Conference
 
@@ -260,6 +356,9 @@ This project is being demonstrated at the Supercomputing Conference 2025 (SC25) 
 - Public Kibana dashboard for real-time monitoring
 - Elasticsearch data storage and indexing
 - Multi-source data aggregation and visualization
+- **Machine Learning:** Baseline models for cosmic ray event classification
+- **Federated Learning:** Distributed model training demonstration (complete)
+- **Scientific Analysis:** Energy spectrum, coincidence detection, environmental correlations
 
 ## Contributing
 
@@ -274,6 +373,12 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-**Project Status:** Active - SC25 demonstration  
-**Last Updated:** December 2024  
-**Focus:** Real-time cosmic ray detection data collection and visualization
+**Project Status:** Active - SC25 demonstration (Day 6 of 8 complete)  
+**Last Updated:** November 2024  
+**Focus:** Real-time cosmic ray detection data collection, AI/ML classification, and federated learning
+
+**Current Progress:**
+- ✅ Day 1-2: Data collection, analysis, and partitioning (COMPLETE)
+- ✅ Day 3-4: Baseline model development (COMPLETE)
+- ✅ Day 5-6: Federated learning implementation (COMPLETE)
+- 📋 Day 7-8: Integration and visualization (PLANNED)

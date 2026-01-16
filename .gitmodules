@@ -2,3 +2,6 @@
 	path = CosmicWatch-Desktop-Muon-Detector-v3X
 	url = git@github.com:carlynlee/CosmicWatch-Desktop-Muon-Detector-v3X.git
 	branch = main
+[submodule "RINO"]
+	path = RINO
+	url = git@github.com:zichunhao/RINO.git

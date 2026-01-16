@@ -1,0 +1,52 @@
+{
+  "model_type": "binary_classification",
+  "task": "coincidence_prediction",
+  "features_used": [
+    "adc_value",
+    "sipm_mv",
+    "temperature_c",
+    "pressure_pa",
+    "accel_z_g"
+  ],
+  "test_accuracy": 0.6978363591146481,
+  "test_precision": 0.27369742623979915,
+  "test_recall": 0.8825910931174089,
+  "test_f1": 0.41782462865356973,
+  "test_roc_auc": 0.8169821240195645,
+  "best_val_accuracy": 0.7033076349166874,
+  "train_samples": 32165,
+  "val_samples": 4021,
+  "test_samples": 4021,
+  "confusion_matrix": [
+    [
+      2370,
+      1157
+    ],
+    [
+      58,
+      436
+    ]
+  ],
+  "predicted_coincidence_rate": 39.61701069385725,
+  "actual_coincidence_rate": 12.285500526428223,
+  "model_architecture": {
+    "input_size": 5,
+    "hidden_sizes": [
+      64,
+      32
+    ],
+    "output_size": 1
+  },
+  "optimal_threshold": 0.7199999999999998,
+  "threshold_05_performance": {
+    "predicted_rate": 0.3961701069385725,
+    "precision": 0.27369742623979915,
+    "recall": 0.8825910931174089
+  },
+  "optimal_threshold_performance": {
+    "predicted_rate": 0.1335488684406864,
+    "precision": 0.3091247672253259,
+    "recall": 0.3360323886639676,
+    "f1": 0.32201745877788557
+  }
+}

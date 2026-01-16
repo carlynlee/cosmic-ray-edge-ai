@@ -1,0 +1,123 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: credo-stream
+  namespace: cblee-credo
+  labels:
+    app: credo-stream
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: credo-stream
+  template:
+    metadata:
+      labels:
+        app: credo-stream
+    spec:
+      containers:
+      - name: credo-stream
+        image: python:3.11-slim
+        imagePullPolicy: IfNotPresent
+        command:
+        - /bin/bash
+        - -c
+        - |
+          set -e
+          echo "=== CREDO Real-Time Streamer Starting ==="
+          echo "Timestamp: $(date)"
+          echo "Python version: $(python3 --version)"
+          
+          # Install dependencies
+          echo "Installing dependencies..."
+          pip install --quiet --no-cache-dir requests urllib3
+          
+          # Verify script exists
+          if [ ! -f /app/stream_credo_to_elasticsearch.py ]; then
+            echo "ERROR: Script not found at /app/stream_credo_to_elasticsearch.py"
+            exit 1
+          fi
+          
+          # Copy script to workspace (writable location) for execution
+          cp /app/stream_credo_to_elasticsearch.py /workspace/stream_credo_to_elasticsearch.py
+          chmod +x /workspace/stream_credo_to_elasticsearch.py
+          
+          # Verify environment variables
+          echo "Configuration:"
+          echo "  CREDO_ENDPOINT: ${CREDO_ENDPOINT}"
+          echo "  ES_HOST: ${ES_HOST}"
+          echo "  ES_INDEX: ${ES_INDEX}"
+          echo "  POLL_INTERVAL: ${POLL_INTERVAL}s"
+          echo "  RATE_LIMIT_BACKOFF: ${RATE_LIMIT_BACKOFF}s"
+          echo ""
+          
+          # Run the streaming script from workspace
+          exec python3 /workspace/stream_credo_to_elasticsearch.py
+        env:
+        # CREDO API credentials (from secret)
+        - name: CREDO_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: credo-credentials
+              key: username
+              optional: true
+        - name: CREDO_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: credo-credentials
+              key: password
+              optional: true
+        - name: CREDO_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: credo-token
+              key: token
+              optional: true
+        # CREDO API configuration
+        - name: CREDO_ENDPOINT
+          value: "https://api.credo.science/api/v2"
+        # Elasticsearch configuration
+        - name: ES_HOST
+          value: "https://credo-elasticsearch-es-http:9200"
+        - name: ES_USER
+          value: "elastic"
+        - name: ES_PASS
+          valueFrom:
+            secretKeyRef:
+              name: credo-elasticsearch-es-elastic-user
+              key: elastic
+        - name: ES_INDEX
+          value: "credo-detections"
+        # Streamer configuration (updated with rate limit handling)
+        - name: POLL_INTERVAL
+          value: "900"  # 15 minutes (reduced from 5 minutes to avoid rate limits)
+        - name: MAX_CHUNK_SIZE
+          value: "10000"
+        - name: STATE_FILE
+          value: "/workspace/credo_stream_state.json"
+        - name: RATE_LIMIT_BACKOFF
+          value: "1800"  # 30 minutes when rate limited
+        - name: EXPORT_WAIT_RETRIES
+          value: "120"  # 120 retries = 60 minutes max wait for export
+        - name: EXPORT_WAIT_INTERVAL
+          value: "30"  # 30 seconds between export status checks
+        volumeMounts:
+        - name: script
+          mountPath: /app
+          readOnly: true
+        - name: workspace
+          mountPath: /workspace
+        resources:
+          requests:
+            cpu: 100m
+            memory: 256Mi
+          limits:
+            cpu: 500m
+            memory: 512Mi
+      volumes:
+      - name: script
+        configMap:
+          name: credo-stream-script
+          defaultMode: 0755
+      - name: workspace
+        emptyDir: {}
