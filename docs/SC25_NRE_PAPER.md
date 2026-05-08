@@ -1,3 +1,21 @@
+# SC25 NRE Submission & Paper
+
+---
+
+## Publishable Abstract (NRE Submission)
+
+**Title:** Onboard AI and Federated Learning for Cosmic Ray Event Detection  
+**Authors:** Carlyn Lee (Caltech / Oligo Space), John Graham (UCSD), Harvey Newman (Caltech), Spencer Axani (U. Delaware), Mohammad Sada (SDSC)
+
+This NRE demonstration showcases AI and federated learning for cosmic ray event detection using CosmicWatch Desktop Muon Detector v3X units streaming real-time data to Elasticsearch on NRP Nautilus. Federated learning trains models across distributed nodes while preserving data sovereignty. The system validates space-ready architecture (0.5W detectors, edge AI, bandwidth-efficient model updates) in preparation for flight on an Oligo Spacecraft. SCinet connectivity links the SC25 booth to NRP Nautilus for real-time federated learning coordination.
+
+**Bandwidth:** 10 Gbps minimum (100 Gbps to demonstrate SCinet capabilities); <100ms latency for FL coordination.  
+**Network:** SCinet booth → NRP Nautilus (patternlab.calit2.optiputer.net).
+
+---
+
+## Full Paper
+
 # Federated Learning for Cosmic Ray Event Classification: Real-Time Data Pipeline Demo at SC25
 
 **Authors:** Carlyn Lee, Harvey Newman
