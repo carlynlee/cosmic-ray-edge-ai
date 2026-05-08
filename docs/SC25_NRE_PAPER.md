@@ -301,9 +301,9 @@ These limitations motivated our transition to transformer-based self-supervised 
 
 **Model Type:** Multi-Layer Perceptron (MLP)
 
-**Architecture:**
+**Architecture (baseline [64, 32]; trade study also evaluated [32, 16], [128, 64], and [64, 64, 32]):**
 ```
-Input Layer (5-7 features)
+Input Layer (5 features)
     ↓
 Hidden Layer 1 (64 neurons, ReLU)
     ↓
@@ -316,19 +316,9 @@ Dropout (0.3)
 Output Layer (1 neuron, Sigmoid)
 ```
 
-**Features Used:**
-- ADC value (normalized)
-- SiPM voltage (normalized)
-- Temperature (normalized)
-- Pressure (normalized)
-- Deadtime (normalized)
+**Features Used:** The model takes five normalized inputs: ADC value, SiPM voltage, temperature, pressure, and deadtime.
 
-**Hyperparameters:**
-- Optimizer: Adam (learning rate: 0.001)
-- Loss function: Binary cross-entropy with class weights
-- Batch size: 32
-- Epochs: 50-100 (with early stopping)
-- Class weights: {0: 1.0, 1: 7.0} (inverse frequency)
+**Hyperparameters:** Training uses the Adam optimizer with a learning rate of 0.001 and binary cross-entropy loss with class weights. The batch size is 32, and training runs for 50–100 epochs with early stopping. Class weights are set to {0: 1.0, 1: 7.0} (inverse frequency) to address the class imbalance.
 
 **Training Strategy:**
 - Data Split: Training (80%), Validation (10%), Test (10%)  
@@ -341,15 +331,11 @@ Output Layer (1 neuron, Sigmoid)
 - **Baseline (threshold=0.5):** Precision: 0.27, Recall: 0.88
 - **Optimal (threshold=0.72):** Precision: 0.31, Recall: 0.34, F1-Score: 0.32
 
-**Analysis:**
-- ROC-AUC of 0.82 indicates good class separation capability
-- High recall (0.88 at baseline) means model catches most coincidence events
-- Optimal threshold produces predicted rate close to observed rate (physics validation pending)
-- Precision can be improved with more training or feature engineering
+**Analysis:** ROC-AUC of 0.82 (baseline [64, 32]) indicates good class separation. A trade study of 10 configurations—varying architecture ([32, 16] to [128, 64]), dropout (0.0–0.5), learning rate (0.0001–0.01), and batch size (16–64)—yielded ROC-AUC ~0.81–0.82 across all variants, so the model is robust to hyperparameters; the smaller [32, 16] layout (~737 parameters) is viable for onboard deployment with minimal performance loss. High recall (0.88 at baseline threshold 0.5) means the model catches most coincidence events. Optimal threshold 0.72 produces a predicted rate close to the observed rate (physics validation pending). Precision can be improved with more training or feature engineering.
 
-![Figure XX: ROC Curve](../scripts/models/roc_curve.png)
+![Figure XX: ROC Curve Trade Study](../scripts/models/trade_study/trade_study_roc_curves.png)
 
-**Figure XX:** Receiver Operating Characteristic (ROC) curve for the CosmicWatch binary classification model, showing ROC-AUC of 0.82. The curve demonstrates class separation capability, with the model able to distinguish between coincidence and non-coincidence events.
+**Figure XX:** ROC curves for 10 binary classifier configurations predicting cosmic ray coincidence events (~40,000 events). Each curve plots true positive rate vs. false positive rate; AUC quantifies discriminative ability. Configurations vary in **architecture size** (small [32, 16] to large [128, 64], plus 3-layer [64, 64, 32]), **dropout** (0.0, 0.3, 0.5), **learning rate** (0.0001, 0.001, 0.01), and **batch size** (16, 32, 64). ROC-AUC clusters around 0.81–0.82 across all variants, indicating robustness to hyperparameters and that smaller architectures (e.g., [32, 16]) are viable for onboard deployment with minimal performance loss.
 
 ![Figure XX: Training Curves](../scripts/models/training_curves.png)
 
