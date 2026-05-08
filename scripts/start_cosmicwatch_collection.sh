@@ -21,7 +21,7 @@ echo "======================================================================"
 echo ""
 
 # Check if port-forward is running
-if ! curl -k -s -u "elastic:${ES_PASS:-RC0hJ6vR68c29mqq5O5Hu19u}" "https://localhost:9200" > /dev/null 2>&1; then
+if ! curl -k -s -u "elastic:${ES_PASS:-<YOUR_ES_PASSWORD>}" "https://localhost:9200" > /dev/null 2>&1; then
     echo -e "${YELLOW}⚠️  Elasticsearch not accessible on localhost:9200${NC}"
     echo ""
     echo "You need to start port-forwarding first:"
@@ -35,7 +35,7 @@ fi
 # Set environment variables
 export ES_HOST="${ES_HOST:-https://localhost:9200}"
 export ES_USER="${ES_USER:-elastic}"
-export ES_PASS="${ES_PASS:-RC0hJ6vR68c29mqq5O5Hu19u}"
+export ES_PASS="${ES_PASS:-<YOUR_ES_PASSWORD>}"
 export ES_INDEX="${ES_INDEX:-credo-detections}"
 export ES_ENABLED="${ES_ENABLED:-true}"
 

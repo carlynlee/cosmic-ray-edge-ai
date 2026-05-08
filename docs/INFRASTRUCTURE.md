@@ -64,7 +64,7 @@ python3 credo-data-exporter.py \
 
 ### Kubernetes deployment
 ```bash
-export CREDO_USERNAME="carlynan"
+export CREDO_USERNAME="<YOUR_CREDO_USERNAME>"
 export CREDO_PASSWORD="<password>"
 ./deploy/07-deploy-credo-stream.sh
 

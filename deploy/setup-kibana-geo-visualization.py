@@ -11,7 +11,7 @@ import time
 # Kibana configuration
 KIBANA_HOST = "http://localhost:5601"
 KIBANA_USER = "elastic"
-KIBANA_PASS = "RC0hJ6vR68c29mqq5O5Hu19u"
+KIBANA_PASS = "<YOUR_ES_PASSWORD>"
 
 class KibanaGeoVisualization:
     def __init__(self):
@@ -211,7 +211,7 @@ class KibanaGeoVisualization:
         print("1. Open your browser and go to: http://localhost:5601")
         print("2. Login with:")
         print("   Username: elastic")
-        print("   Password: RC0hJ6vR68c29mqq5O5Hu19u")
+        print("   Password: <YOUR_ES_PASSWORD>")
         
         print("\n🗺️  Geographic Visualizations:")
         print("1. Go to 'Visualize' in the left sidebar")

@@ -83,7 +83,7 @@ fi
 # Test connection
 echo "Testing connection..."
 sleep 1
-if curl -k -s -u "elastic:${ES_PASS:-RC0hJ6vR68c29mqq5O5Hu19u}" "https://localhost:$LOCAL_PORT" > /dev/null 2>&1; then
+if curl -k -s -u "elastic:${ES_PASS:-<YOUR_ES_PASSWORD>}" "https://localhost:$LOCAL_PORT" > /dev/null 2>&1; then
     echo -e "${GREEN}✓ Port-forward is running successfully${NC}"
     echo "  PID: $PF_PID"
     echo "  Log: $LOG_FILE"

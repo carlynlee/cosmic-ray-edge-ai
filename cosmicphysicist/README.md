@@ -13,12 +13,12 @@ CosmicWatch (USB /dev/ttyACM1)
         |-- Ollama (CosmicPhysicist model, Qwen 2.5 3B)
         |-- correlation engine (±5s window, CW ↔ iPhone)
         |
-   http://192.168.1.88:5000  iPhone Safari web UI + camera detector
+   http://<PI_IP_ADDRESS>:5000  iPhone Safari web UI + camera detector
 ```
 
 ## Hardware
 
-- Raspberry Pi 5 (8GB), Debian 13, at `192.168.1.88`
+- Raspberry Pi 5 (8GB), Debian 13, at `<PI_IP_ADDRESS>`
 - CosmicWatch Desktop Muon Detector v3X on `/dev/ttyACM1`
 - iPhone (Safari PWA — live feed + camera particle detector)
 
@@ -59,27 +59,27 @@ sudo journalctl -u cosmic-bridge -f
 Edit files locally in this directory, then sync to Pi:
 
 ```bash
-scp cosmicphysicist/server.py pi@192.168.1.88:/home/pi/cosmic_server/server.py
-scp cosmicphysicist/static/index.html pi@192.168.1.88:/home/pi/cosmic_server/static/index.html
-scp cosmicphysicist/cosmic_bridge.py pi@192.168.1.88:/home/pi/cosmic_bridge.py
+scp cosmicphysicist/server.py pi@<PI_IP_ADDRESS>:/home/pi/cosmic_server/server.py
+scp cosmicphysicist/static/index.html pi@<PI_IP_ADDRESS>:/home/pi/cosmic_server/static/index.html
+scp cosmicphysicist/cosmic_bridge.py pi@<PI_IP_ADDRESS>:/home/pi/cosmic_bridge.py
 sudo systemctl restart cosmic-server cosmic-bridge
 ```
 
 To update the LLM system prompt:
 ```bash
-scp cosmicphysicist/CosmicPhysicist.Modelfile pi@192.168.1.88:/home/pi/CosmicPhysicist.Modelfile
-ssh pi@192.168.1.88 "ollama create CosmicPhysicist -f /home/pi/CosmicPhysicist.Modelfile"
+scp cosmicphysicist/CosmicPhysicist.Modelfile pi@<PI_IP_ADDRESS>:/home/pi/CosmicPhysicist.Modelfile
+ssh pi@<PI_IP_ADDRESS> "ollama create CosmicPhysicist -f /home/pi/CosmicPhysicist.Modelfile"
 ```
 
 ## iPhone camera detector
 
-The PWA at `http://192.168.1.88:5000` includes a camera-based particle detector. Safari on iOS requires HTTPS for camera access — if the Start button fails, add SSL:
+The PWA at `http://<PI_IP_ADDRESS>:5000` includes a camera-based particle detector. Safari on iOS requires HTTPS for camera access — if the Start button fails, add SSL:
 
 ```bash
-ssh pi@192.168.1.88
+ssh pi@<PI_IP_ADDRESS>
 openssl req -x509 -newkey rsa:2048 -keyout /home/pi/cosmic_server/key.pem \
   -out /home/pi/cosmic_server/cert.pem -days 365 -nodes \
-  -subj "/CN=192.168.1.88" -addext "subjectAltName=IP:192.168.1.88"
+  -subj "/CN=<PI_IP_ADDRESS>" -addext "subjectAltName=IP:<PI_IP_ADDRESS>"
 ```
 
 Then update the last line of `server.py`:
@@ -88,7 +88,7 @@ app.run(host="0.0.0.0", port=5000, threaded=True,
         ssl_context=("cert.pem", "key.pem"))
 ```
 
-Visit `https://192.168.1.88:5000`, accept the certificate warning, and camera access will work.
+Visit `https://<PI_IP_ADDRESS>:5000`, accept the certificate warning, and camera access will work.
 
 ## What the LLM knows
 

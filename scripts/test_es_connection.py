@@ -13,7 +13,7 @@ ES_HOST = os.getenv('ES_HOST', 'http://localhost:9200')
 if 'localhost' in ES_HOST or '127.0.0.1' in ES_HOST:
     ES_HOST = ES_HOST.replace('https://', 'http://')
 ES_USER = os.getenv('ES_USER', 'elastic')
-ES_PASS = os.getenv('ES_PASS', 'RC0hJ6vR68c29mqq5O5Hu19u')
+ES_PASS = os.getenv('ES_PASS', '<YOUR_ES_PASSWORD>')
 
 print(f"Testing connection to: {ES_HOST}")
 print(f"User: {ES_USER}")

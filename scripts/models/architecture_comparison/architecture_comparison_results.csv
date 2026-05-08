@@ -1,0 +1,7 @@
+Architecture,Accuracy,Precision,Recall,F1-Score,ROC-AUC
+MLP Neural Network,0.6956,0.2716,0.8785,0.4149,0.8158
+Logistic Regression,0.7657,0.3007,0.6842,0.4178,0.8048
+Random Forest,0.7177,0.2836,0.8502,0.4253,0.8148
+Gradient Boosting,0.8752,0.1667,0.0040,0.0079,0.8147
+XGBoost,0.8762,0.1667,0.0020,0.0040,0.8131
+LightGBM,0.8762,0.0000,0.0000,0.0000,0.8132

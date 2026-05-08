@@ -6,7 +6,7 @@ This script authenticates with CREDO.science API using username/password
 and retrieves an API token for use in other scripts.
 
 Usage:
-    python3 get_credo_token.py --username carlynan --password Password321!
+    python3 get_credo_token.py --username <YOUR_CREDO_USERNAME> --password <YOUR_CREDO_PASSWORD>
 """
 
 import argparse
