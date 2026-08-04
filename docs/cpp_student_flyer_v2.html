@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Research Opportunity — Cosmic Ray Sensor Network</title>
+<style>
+  @page { size: Letter; margin: 0.4in; }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    padding: 0;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    color: #0f172a;
+    background: #fff;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  body { padding: 28px 32px; }
+  .page { max-width: 8.5in; margin: 0 auto; }
+
+  /* Header */
+  .hero {
+    background: linear-gradient(135deg, #0b1a3a 0%, #102a63 55%, #1a4bb5 100%);
+    color: #fff;
+    padding: 22px 26px;
+    border-radius: 10px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::after {
+    content: "";
+    position: absolute;
+    right: -60px; top: -60px;
+    width: 220px; height: 220px;
+    background: radial-gradient(circle, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0) 70%);
+    border-radius: 50%;
+  }
+  .kicker {
+    font-size: 11px;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: #9ec5ff;
+    margin: 0 0 6px 0;
+    font-weight: 700;
+  }
+  h1 {
+    font-size: 26px;
+    line-height: 1.15;
+    margin: 0 0 8px 0;
+    font-weight: 800;
+    letter-spacing: -0.3px;
+  }
+  .subtitle {
+    font-size: 13px;
+    color: #dbe8ff;
+    margin: 0;
+    max-width: 640px;
+    line-height: 1.45;
+  }
+  .tags { margin-top: 12px; display: flex; flex-wrap: wrap; gap: 6px; }
+  .tag {
+    background: rgba(255,255,255,0.14);
+    color: #fff;
+    border: 1px solid rgba(255,255,255,0.3);
+    padding: 3px 9px;
+    border-radius: 999px;
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+  }
+
+  /* Timeline banner */
+  .timeline {
+    margin-top: 14px;
+    background: #fff7ed;
+    border: 1px solid #fcd9a6;
+    border-left: 5px solid #f59e0b;
+    border-radius: 8px;
+    padding: 10px 14px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 14px;
+    align-items: center;
+  }
+  .timeline-text { font-size: 12.5px; color: #78350f; line-height: 1.45; }
+  .timeline-text strong { color: #7c2d12; }
+  .timeline-cta {
+    background: #b45309;
+    color: #fff;
+    padding: 7px 14px;
+    border-radius: 6px;
+    font-size: 11.5px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  /* Problem statement */
+  .problem {
+    margin-top: 16px;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-left: 5px solid #1a4bb5;
+    border-radius: 10px;
+    padding: 14px 18px;
+  }
+  .problem h2 {
+    font-size: 13px;
+    margin: 0 0 6px 0;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: #102a63;
+  }
+  .problem p {
+    font-size: 12.5px;
+    line-height: 1.5;
+    margin: 4px 0;
+    color: #334155;
+  }
+  .problem .question {
+    margin-top: 6px;
+    font-size: 12.5px;
+    color: #0f172a;
+  }
+  .problem .question strong { color: #102a63; }
+
+  /* Body grid */
+  .grid {
+    display: grid;
+    grid-template-columns: 1.3fr 1fr;
+    gap: 18px;
+    margin-top: 16px;
+  }
+
+  .card {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 14px 16px;
+  }
+  .card h2 {
+    font-size: 13px;
+    margin: 0 0 8px 0;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: #102a63;
+    border-bottom: 2px solid #1a4bb5;
+    padding-bottom: 4px;
+    display: inline-block;
+  }
+  .card p, .card li { font-size: 12.5px; line-height: 1.5; margin: 4px 0; }
+  ul { padding-left: 18px; margin: 6px 0; }
+
+  /* Tracks */
+  .track {
+    display: grid;
+    grid-template-columns: 90px 1fr;
+    gap: 10px;
+    align-items: start;
+    padding: 9px 0;
+    border-bottom: 1px dashed #cbd5e1;
+  }
+  .track:last-child { border-bottom: none; }
+  .track-badge {
+    background: #1a4bb5;
+    color: #fff;
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-size: 10.5px;
+    font-weight: 700;
+    text-align: center;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+  }
+  .track-badge.sr { background: #1a4bb5; }
+  .track-badge.ms { background: #0b1a3a; }
+  .track-badge.summer { background: #0ea5e9; }
+  .track-title {
+    font-size: 13px;
+    font-weight: 700;
+    margin: 0 0 2px 0;
+    color: #0f172a;
+  }
+  .track-desc {
+    font-size: 12px;
+    color: #334155;
+    line-height: 1.45;
+    margin: 0;
+  }
+  .track-tags {
+    margin-top: 4px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+  .track-tag {
+    font-size: 10px;
+    background: #e2e8f0;
+    color: #334155;
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-weight: 600;
+  }
+
+  /* Pillars */
+  .pillars {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-top: 6px;
+  }
+  .pillar {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 10px;
+  }
+  .pillar .icon {
+    font-size: 16px;
+    font-weight: 800;
+    color: #1a4bb5;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .pillar h3 {
+    font-size: 11px;
+    margin: 0 0 3px 0;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: #102a63;
+  }
+  .pillar p { font-size: 11px; margin: 0; color: #334155; line-height: 1.4; }
+
+  .why-list li { margin-bottom: 4px; }
+  .why-list strong { color: #102a63; }
+
+  /* Freshman sidebar */
+  .frosh-note {
+    margin-top: 10px;
+    background: #eef2ff;
+    border: 1px dashed #a5b4fc;
+    border-radius: 8px;
+    padding: 9px 12px;
+    font-size: 11.5px;
+    color: #312e81;
+    line-height: 1.45;
+  }
+  .frosh-note strong { color: #1e1b4b; }
+
+  /* Footer / contact */
+  .footer {
+    margin-top: 16px;
+    background: #0b1a3a;
+    color: #fff;
+    border-radius: 10px;
+    padding: 16px 22px;
+    display: grid;
+    grid-template-columns: 1.3fr 1fr;
+    gap: 16px;
+    align-items: center;
+  }
+  .footer h2 { font-size: 15px; margin: 0 0 6px 0; color: #fff; }
+  .footer p { margin: 0; font-size: 12px; color: #cfd9ee; line-height: 1.5; }
+  .footer ol {
+    margin: 8px 0 0 0;
+    padding-left: 18px;
+    font-size: 12px;
+    color: #cfd9ee;
+    line-height: 1.55;
+  }
+  .footer ol strong { color: #fff; }
+
+  .contact {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.18);
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 12px;
+    line-height: 1.55;
+  }
+  .contact .name { font-weight: 700; font-size: 12.5px; }
+  .contact .muted { color: #9ec5ff; font-size: 11px; }
+  a { color: #9ec5ff; text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  .fine {
+    margin-top: 10px;
+    font-size: 10.5px;
+    color: #64748b;
+    text-align: center;
+  }
+  .fine a {
+    color: #1a4bb5;
+    text-decoration: none;
+    border-bottom: 1px dotted #1a4bb5;
+  }
+  .fine a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- HERO -->
+  <section class="hero">
+    <p class="kicker">Research Opportunity · For Juniors, Seniors &amp; Master's Students</p>
+    <h1>Build a Cosmic Ray Sensor Network</h1>
+    <p class="subtitle">
+      Hands-on research at the intersection of <strong>embedded hardware</strong>,
+      <strong>distributed systems</strong>, and <strong>machine learning</strong>.
+      Work with low-power muon detectors, stream real-time data to a Kubernetes
+      cluster on the National Research Platform, and train federated models
+      alongside Caltech collaborators. Qualifies as a <strong>senior design</strong>
+      or <strong>master's project</strong>.
+    </p>
+    <div class="tags">
+      <span class="tag">Embedded / Arduino</span>
+      <span class="tag">Python &amp; PyTorch</span>
+      <span class="tag">Kubernetes</span>
+      <span class="tag">Federated Learning</span>
+      <span class="tag">Elasticsearch / Kibana</span>
+      <span class="tag">Distributed Sensor Networks</span>
+    </div>
+  </section>
+
+  <!-- PROBLEM STATEMENT -->
+  <section class="problem">
+    <h2>The Problem</h2>
+    <p>
+      Every minute, thousands of cosmic rays pass through each square meter of
+      Earth. Each cosmic ray offers a clue about extreme astrophysical events like supernovae
+      and active galactic nuclei. Today we can try to detect them with a patchwork of
+      citizen-science smartphones and low-cost detectors, but the data is
+      noisy, globally distributed, and overwhelmingly made of artifacts and
+      background.
+    </p>
+    <p class="question">
+      <strong>The question:</strong> How can we design a network of
+      detectors and machine learning models so the
+      system as a whole surfaces scientific insight?
+    </p>
+  </section>
+
+  <!-- BODY -->
+  <div class="grid">
+
+    <!-- LEFT: Tracks -->
+    <section class="card">
+      <h2>Project Tracks</h2>
+      <p style="margin-top:0; color:#334155;">
+        Choose a track that fits your background and time commitment. No prior
+        research experience required — just a course or two in programming,
+        circuits, or signals.
+      </p>
+
+      <div class="track">
+        <span class="track-badge summer">SUMMER</span>
+        <div>
+          <p class="track-title">Summer on-ramp: build &amp; deploy a detector</p>
+          <p class="track-desc">
+            Over 8–10 weeks, assemble a CosmicWatch v3X detector, stream live
+            data to Elasticsearch, and build a Kibana dashboard. Ends with a
+            working node contributing to the network — and a concrete portfolio
+            piece.
+          </p>
+          <div class="track-tags">
+            <span class="track-tag">Arduino</span>
+            <span class="track-tag">Python</span>
+            <span class="track-tag">Linux</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="track">
+        <span class="track-badge sr">SENIOR DESIGN</span>
+        <div>
+          <p class="track-title">Capstone-scale module (Fall / full year)</p>
+          <p class="track-desc">
+            Own a real subsystem: multi-detector coincidence arrays, edge ML
+            inference on-device, a new binary-classification model, or a rugged
+            enclosure + power subsystem for deployment at CPP. Scoped to
+            satisfy CPP senior design requirements.
+          </p>
+          <div class="track-tags">
+            <span class="track-tag">Embedded</span>
+            <span class="track-tag">Signal processing</span>
+            <span class="track-tag">System design</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="track">
+        <span class="track-badge ms">MASTER'S</span>
+        <div>
+          <p class="track-title">Thesis / project with publishable output</p>
+          <p class="track-desc">
+            Federated learning across institutional clients, self-supervised
+            representation learning on cosmic-ray image data, or
+            bandwidth-aware edge AI for future space-constrained deployments.
+            Work towards producing conference-level results.
+          </p>
+          <div class="track-tags">
+            <span class="track-tag">PyTorch</span>
+            <span class="track-tag">Kubernetes</span>
+            <span class="track-tag">Research</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="frosh-note">
+        <strong>Know a strong freshman or sophomore?</strong> Research
+        compounds — the earlier a student starts, the more ownership and
+        authorship they'll have by graduation. Point them toward Prof. Wu;
+        we have a lighter-weight on-ramp for underclassmen.
+      </div>
+    </section>
+
+    <!-- RIGHT: Why + pillars -->
+    <section>
+      <section class="card" style="margin-bottom:12px;">
+        <h2>Why This Project</h2>
+        <ul class="why-list" style="margin-top:4px;">
+          <li><strong>Real infrastructure.</strong> Test your own hypotheses and ML models on a live pipeline running on the <strong>National Research Platform</strong>, with a path to deploy your work on <strong>SCinet</strong> (the Supercomputing conference's research network) in the future.</li>
+          <li><strong>Real collaborators.</strong> Connects CPP with Caltech High Energy Physics and the global citizen-science network.</li>
+          <li><strong>Real skills.</strong> Hardware + cloud + ML — the combination that's hard to get in any single class.</li>
+          <li><strong>Real output.</strong> Contributions show up in papers, open-source repos, and conference demos you can point employers to.</li>
+        </ul>
+      </section>
+
+      <section class="card">
+        <h2>What You'll Touch</h2>
+        <div class="pillars">
+          <div class="pillar">
+            <div class="icon">HW</div>
+            <h3>Hardware</h3>
+            <p>Arduino Nano, SiPM, scintillators, coincidence logic, enclosures.</p>
+          </div>
+          <div class="pillar">
+            <div class="icon">SW</div>
+            <h3>Software</h3>
+            <p>Python, PyTorch, Flower FL, Elasticsearch, Kubernetes.</p>
+          </div>
+          <div class="pillar">
+            <div class="icon">ML</div>
+            <h3>Research</h3>
+            <p>Federated learning, SSL, edge AI, distributed sensor networks.</p>
+          </div>
+        </div>
+      </section>
+    </section>
+  </div>
+
+  <!-- FOOTER / CONTACT -->
+  <section class="footer">
+    <div>
+      <h2>Interested? Here's how to sign up.</h2>
+      <ol>
+        <li><strong>Email Prof. Wu</strong> to express interest.</li>
+        <li>Include your <strong>year, one line on what excites you</strong> (hardware, software, or ML), and any relevant coursework or side projects.</li>
+        <li>We'll set up a <strong>15-minute chat</strong> and match you to a track for summer or fall.</li>
+      </ol>
+    </div>
+    <div class="contact">
+      <div class="muted">Faculty sponsor</div>
+      <div class="name">Prof. Yifan Wu</div>
+      <div>
+        <a href="mailto:yifanwu@cpp.edu">yifanwu@cpp.edu</a>
+        <span class="muted"> · Cal Poly Pomona ECE</span>
+      </div>
+      <div style="margin-top:8px;" class="muted">Project mentor</div>
+      <div class="name">Carlyn Lee</div>
+      <div class="muted">Caltech High Energy Physics collaborator</div>
+      <div>
+        <a href="mailto:cblee@caltech.edu">cblee@caltech.edu</a>
+      </div>
+    </div>
+  </section>
+
+  <p class="fine">
+    Hardware: <a href="http://www.cosmicwatch.lns.mit.edu/" target="_blank" rel="noopener">CosmicWatch Desktop Muon Detector v3X</a> (Prof. S. Axani, Univ. of Delaware) ·
+    Data: <a href="https://credo.science/" target="_blank" rel="noopener">CREDO.science</a> global network ·
+    Infrastructure: NRP Nautilus / SCinet
+  </p>
+
+</div>
+</body>
+</html>

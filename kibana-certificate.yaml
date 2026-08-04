@@ -1,0 +1,16 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: credo-kibana-cert
+  namespace: cblee-credo
+spec:
+  secretName: credo-kibana-tls-secret
+  issuerRef:
+    name: letsencrypt-prod  # Common name for Let's Encrypt production issuer
+    kind: Issuer  # Using Issuer instead of ClusterIssuer (ClusterIssuer blocked by Gatekeeper)
+    # Note: If this doesn't work, we may need NRP admins to create the certificate
+  dnsNames:
+  - credo-kibana.nrp-nautilus.io
+  # Optional: Add common name
+  # commonName: credo-kibana.nrp-nautilus.io
+

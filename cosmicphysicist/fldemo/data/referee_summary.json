@@ -1,0 +1,9 @@
+{
+  "headline": "CosmicWatch (calibrated detector): 1.84 Hz muon rate over 232 h \u2014 monitoring flux; barometric signal inconclusive on this run.",
+  "flux_hz": 1.8430653004089756,
+  "coincidence_rate_hz": 0.21255934438049853,
+  "beta_pct_per_hpa": -3.861591808794847,
+  "verdict": "INCONCLUSIVE",
+  "n_events": 1544369,
+  "span_hours": 232.0073818467723
+}

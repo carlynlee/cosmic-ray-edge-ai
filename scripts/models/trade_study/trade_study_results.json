@@ -1,0 +1,203 @@
+[
+  {
+    "config": {
+      "name": "Baseline",
+      "hidden_sizes": [
+        64,
+        32
+      ],
+      "dropout": 0.3,
+      "learning_rate": 0.001,
+      "batch_size": 32
+    },
+    "metrics": {
+      "accuracy": 0.6948520268589903,
+      "precision": 0.27108057464084945,
+      "recall": 0.8785425101214575,
+      "f1": 0.4143198090692124,
+      "roc_auc": 0.8192819074140608,
+      "best_val_acc": 0.7085302163640885
+    }
+  },
+  {
+    "config": {
+      "name": "Small (32, 16)",
+      "hidden_sizes": [
+        32,
+        16
+      ],
+      "dropout": 0.3,
+      "learning_rate": 0.001,
+      "batch_size": 32
+    },
+    "metrics": {
+      "accuracy": 0.6933598607311614,
+      "precision": 0.2712074303405573,
+      "recall": 0.8866396761133604,
+      "f1": 0.41536273115220484,
+      "roc_auc": 0.8138105235608707,
+      "best_val_acc": 0.6941059437950758
+    }
+  },
+  {
+    "config": {
+      "name": "Large (128, 64)",
+      "hidden_sizes": [
+        128,
+        64
+      ],
+      "dropout": 0.3,
+      "learning_rate": 0.001,
+      "batch_size": 32
+    },
+    "metrics": {
+      "accuracy": 0.6951007212136284,
+      "precision": 0.27153558052434457,
+      "recall": 0.8805668016194332,
+      "f1": 0.4150763358778626,
+      "roc_auc": 0.8170286132771023,
+      "best_val_acc": 0.7038050236259636
+    }
+  },
+  {
+    "config": {
+      "name": "Deep (64, 64, 32)",
+      "hidden_sizes": [
+        64,
+        64,
+        32
+      ],
+      "dropout": 0.3,
+      "learning_rate": 0.001,
+      "batch_size": 32
+    },
+    "metrics": {
+      "accuracy": 0.6936085550857995,
+      "precision": 0.27109181141439204,
+      "recall": 0.8846153846153846,
+      "f1": 0.41500474833808165,
+      "roc_auc": 0.8208559418436606,
+      "best_val_acc": 0.6955981099229047
+    }
+  },
+  {
+    "config": {
+      "name": "No Dropout",
+      "hidden_sizes": [
+        64,
+        32
+      ],
+      "dropout": 0.0,
+      "learning_rate": 0.001,
+      "batch_size": 32
+    },
+    "metrics": {
+      "accuracy": 0.6970902760507337,
+      "precision": 0.27261306532663315,
+      "recall": 0.8785425101214575,
+      "f1": 0.4161073825503356,
+      "roc_auc": 0.8190506090092737,
+      "best_val_acc": 0.7000746083063915
+    }
+  },
+  {
+    "config": {
+      "name": "High Dropout (0.5)",
+      "hidden_sizes": [
+        64,
+        32
+      ],
+      "dropout": 0.5,
+      "learning_rate": 0.001,
+      "batch_size": 32
+    },
+    "metrics": {
+      "accuracy": 0.6998259139517533,
+      "precision": 0.27365079365079364,
+      "recall": 0.8724696356275303,
+      "f1": 0.416626389560174,
+      "roc_auc": 0.8138423773114057,
+      "best_val_acc": 0.6988311365332007
+    }
+  },
+  {
+    "config": {
+      "name": "LR 0.0001",
+      "hidden_sizes": [
+        64,
+        32
+      ],
+      "dropout": 0.3,
+      "learning_rate": 0.0001,
+      "batch_size": 32
+    },
+    "metrics": {
+      "accuracy": 0.696095498632181,
+      "precision": 0.2719298245614035,
+      "recall": 0.8785425101214575,
+      "f1": 0.415311004784689,
+      "roc_auc": 0.8197780797985237,
+      "best_val_acc": 0.7115145486197463
+    }
+  },
+  {
+    "config": {
+      "name": "LR 0.01",
+      "hidden_sizes": [
+        64,
+        32
+      ],
+      "dropout": 0.3,
+      "learning_rate": 0.01,
+      "batch_size": 32
+    },
+    "metrics": {
+      "accuracy": 0.6898781397662274,
+      "precision": 0.2694427434170239,
+      "recall": 0.8906882591093117,
+      "f1": 0.4137282557592854,
+      "roc_auc": 0.815227298032873,
+      "best_val_acc": 0.7030589405620492
+    }
+  },
+  {
+    "config": {
+      "name": "Batch 16",
+      "hidden_sizes": [
+        64,
+        32
+      ],
+      "dropout": 0.3,
+      "learning_rate": 0.001,
+      "batch_size": 16
+    },
+    "metrics": {
+      "accuracy": 0.6861477244466551,
+      "precision": 0.2672727272727273,
+      "recall": 0.8927125506072875,
+      "f1": 0.41138059701492535,
+      "roc_auc": 0.8173551859627696,
+      "best_val_acc": 0.7062919671723452
+    }
+  },
+  {
+    "config": {
+      "name": "Batch 64",
+      "hidden_sizes": [
+        64,
+        32
+      ],
+      "dropout": 0.3,
+      "learning_rate": 0.001,
+      "batch_size": 64
+    },
+    "metrics": {
+      "accuracy": 0.6938572494404377,
+      "precision": 0.271260086902545,
+      "recall": 0.8846153846153846,
+      "f1": 0.4152019002375297,
+      "roc_auc": 0.8148814983085945,
+      "best_val_acc": 0.7047998010445163
+    }
+  }
+]

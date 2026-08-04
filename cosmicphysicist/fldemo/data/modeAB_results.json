@@ -1,0 +1,1039 @@
+{
+  "target_acc": 0.95,
+  "max_rounds": 40,
+  "seed": 7,
+  "doc_size_dist_n": 1569,
+  "generated_note": "bytes exclude HTTP headers on both modes; Mode B excludes demo seed bootstrap",
+  "results": [
+    {
+      "K": 5,
+      "S": 150,
+      "modeA": {
+        "upload_bytes": 1252983,
+        "central_epochs": 50,
+        "final_acc": 0.9987212276214834,
+        "reached_target": true,
+        "bootstrap_shards": false
+      },
+      "modeB": {
+        "rounds": 37,
+        "final_acc": 0.9526854219948849,
+        "fl_bytes": 390986,
+        "by_endpoint": {
+          "/get_global_model": {
+            "calls": 185,
+            "in": 4625,
+            "out": 180035
+          },
+          "/register": {
+            "calls": 5,
+            "in": 125,
+            "out": 4015
+          },
+          "/submit_params": {
+            "calls": 185,
+            "in": 196870,
+            "out": 5316
+          }
+        },
+        "curve": [
+          {
+            "round": 1,
+            "accuracy": 0.39258312020460356,
+            "fl_bytes": 13760
+          },
+          {
+            "round": 2,
+            "accuracy": 0.0038363171355498722,
+            "fl_bytes": 24224
+          },
+          {
+            "round": 3,
+            "accuracy": 0.4782608695652174,
+            "fl_bytes": 34684
+          },
+          {
+            "round": 4,
+            "accuracy": 0.5025575447570333,
+            "fl_bytes": 45204
+          },
+          {
+            "round": 5,
+            "accuracy": 0.5025575447570333,
+            "fl_bytes": 55731
+          },
+          {
+            "round": 6,
+            "accuracy": 0.5025575447570333,
+            "fl_bytes": 66222
+          },
+          {
+            "round": 7,
+            "accuracy": 0.5025575447570333,
+            "fl_bytes": 76736
+          },
+          {
+            "round": 8,
+            "accuracy": 0.6074168797953964,
+            "fl_bytes": 87247
+          },
+          {
+            "round": 9,
+            "accuracy": 0.6074168797953964,
+            "fl_bytes": 97738
+          },
+          {
+            "round": 10,
+            "accuracy": 0.6074168797953964,
+            "fl_bytes": 108243
+          },
+          {
+            "round": 11,
+            "accuracy": 0.6074168797953964,
+            "fl_bytes": 118711
+          },
+          {
+            "round": 12,
+            "accuracy": 0.6074168797953964,
+            "fl_bytes": 129230
+          },
+          {
+            "round": 13,
+            "accuracy": 0.6074168797953964,
+            "fl_bytes": 139732
+          },
+          {
+            "round": 14,
+            "accuracy": 0.6074168797953964,
+            "fl_bytes": 150256
+          },
+          {
+            "round": 15,
+            "accuracy": 0.6074168797953964,
+            "fl_bytes": 160749
+          },
+          {
+            "round": 16,
+            "accuracy": 0.6074168797953964,
+            "fl_bytes": 171270
+          },
+          {
+            "round": 17,
+            "accuracy": 0.6074168797953964,
+            "fl_bytes": 181774
+          },
+          {
+            "round": 18,
+            "accuracy": 0.6074168797953964,
+            "fl_bytes": 192269
+          },
+          {
+            "round": 19,
+            "accuracy": 0.6419437340153452,
+            "fl_bytes": 202734
+          },
+          {
+            "round": 20,
+            "accuracy": 0.6419437340153452,
+            "fl_bytes": 213196
+          },
+          {
+            "round": 21,
+            "accuracy": 0.6419437340153452,
+            "fl_bytes": 223629
+          },
+          {
+            "round": 22,
+            "accuracy": 0.6419437340153452,
+            "fl_bytes": 234094
+          },
+          {
+            "round": 23,
+            "accuracy": 0.6419437340153452,
+            "fl_bytes": 244578
+          },
+          {
+            "round": 24,
+            "accuracy": 0.6419437340153452,
+            "fl_bytes": 255045
+          },
+          {
+            "round": 25,
+            "accuracy": 0.6419437340153452,
+            "fl_bytes": 265495
+          },
+          {
+            "round": 26,
+            "accuracy": 0.6419437340153452,
+            "fl_bytes": 275976
+          },
+          {
+            "round": 27,
+            "accuracy": 0.9232736572890026,
+            "fl_bytes": 286453
+          },
+          {
+            "round": 28,
+            "accuracy": 0.9232736572890026,
+            "fl_bytes": 296918
+          },
+          {
+            "round": 29,
+            "accuracy": 0.9232736572890026,
+            "fl_bytes": 307381
+          },
+          {
+            "round": 30,
+            "accuracy": 0.928388746803069,
+            "fl_bytes": 317845
+          },
+          {
+            "round": 31,
+            "accuracy": 0.928388746803069,
+            "fl_bytes": 328298
+          },
+          {
+            "round": 32,
+            "accuracy": 0.928388746803069,
+            "fl_bytes": 338744
+          },
+          {
+            "round": 33,
+            "accuracy": 0.928388746803069,
+            "fl_bytes": 349213
+          },
+          {
+            "round": 34,
+            "accuracy": 0.928388746803069,
+            "fl_bytes": 359622
+          },
+          {
+            "round": 35,
+            "accuracy": 0.928388746803069,
+            "fl_bytes": 370053
+          },
+          {
+            "round": 36,
+            "accuracy": 0.928388746803069,
+            "fl_bytes": 380536
+          },
+          {
+            "round": 37,
+            "accuracy": 0.9526854219948849,
+            "fl_bytes": 390986
+          }
+        ],
+        "bootstrap_shards": false,
+        "reached_target": true
+      },
+      "reduction_x": 3.2046748476927562
+    },
+    {
+      "K": 10,
+      "S": 150,
+      "modeA": {
+        "upload_bytes": 2530544,
+        "central_epochs": 50,
+        "final_acc": 0.9987212276214834,
+        "reached_target": true,
+        "bootstrap_shards": false
+      },
+      "modeB": {
+        "rounds": 34,
+        "final_acc": 0.9526854219948849,
+        "fl_bytes": 720213,
+        "by_endpoint": {
+          "/get_global_model": {
+            "calls": 340,
+            "in": 8840,
+            "out": 331100
+          },
+          "/register": {
+            "calls": 10,
+            "in": 260,
+            "out": 8030
+          },
+          "/submit_params": {
+            "calls": 340,
+            "in": 362222,
+            "out": 9761
+          }
+        },
+        "curve": [
+          {
+            "round": 1,
+            "accuracy": 0.39258312020460356,
+            "fl_bytes": 27542
+          },
+          {
+            "round": 2,
+            "accuracy": 0.0025575447570332483,
+            "fl_bytes": 48434
+          },
+          {
+            "round": 3,
+            "accuracy": 0.4462915601023018,
+            "fl_bytes": 69273
+          },
+          {
+            "round": 4,
+            "accuracy": 0.5025575447570333,
+            "fl_bytes": 90353
+          },
+          {
+            "round": 5,
+            "accuracy": 0.5025575447570333,
+            "fl_bytes": 111453
+          },
+          {
+            "round": 6,
+            "accuracy": 0.5025575447570333,
+            "fl_bytes": 132566
+          },
+          {
+            "round": 7,
+            "accuracy": 0.6074168797953964,
+            "fl_bytes": 153654
+          },
+          {
+            "round": 8,
+            "accuracy": 0.6074168797953964,
+            "fl_bytes": 174703
+          },
+          {
+            "round": 9,
+            "accuracy": 0.6074168797953964,
+            "fl_bytes": 195680
+          },
+          {
+            "round": 10,
+            "accuracy": 0.6074168797953964,
+            "fl_bytes": 216689
+          },
+          {
+            "round": 11,
+            "accuracy": 0.6074168797953964,
+            "fl_bytes": 237689
+          },
+          {
+            "round": 12,
+            "accuracy": 0.6074168797953964,
+            "fl_bytes": 258734
+          },
+          {
+            "round": 13,
+            "accuracy": 0.6074168797953964,
+            "fl_bytes": 279749
+          },
+          {
+            "round": 14,
+            "accuracy": 0.6074168797953964,
+            "fl_bytes": 300762
+          },
+          {
+            "round": 15,
+            "accuracy": 0.6074168797953964,
+            "fl_bytes": 321696
+          },
+          {
+            "round": 16,
+            "accuracy": 0.6074168797953964,
+            "fl_bytes": 342742
+          },
+          {
+            "round": 17,
+            "accuracy": 0.6074168797953964,
+            "fl_bytes": 363737
+          },
+          {
+            "round": 18,
+            "accuracy": 0.6419437340153452,
+            "fl_bytes": 384688
+          },
+          {
+            "round": 19,
+            "accuracy": 0.6419437340153452,
+            "fl_bytes": 405668
+          },
+          {
+            "round": 20,
+            "accuracy": 0.6419437340153452,
+            "fl_bytes": 426653
+          },
+          {
+            "round": 21,
+            "accuracy": 0.6419437340153452,
+            "fl_bytes": 447630
+          },
+          {
+            "round": 22,
+            "accuracy": 0.6419437340153452,
+            "fl_bytes": 468541
+          },
+          {
+            "round": 23,
+            "accuracy": 0.6419437340153452,
+            "fl_bytes": 489537
+          },
+          {
+            "round": 24,
+            "accuracy": 0.6419437340153452,
+            "fl_bytes": 510530
+          },
+          {
+            "round": 25,
+            "accuracy": 0.9232736572890026,
+            "fl_bytes": 531519
+          },
+          {
+            "round": 26,
+            "accuracy": 0.9232736572890026,
+            "fl_bytes": 552501
+          },
+          {
+            "round": 27,
+            "accuracy": 0.928388746803069,
+            "fl_bytes": 573487
+          },
+          {
+            "round": 28,
+            "accuracy": 0.928388746803069,
+            "fl_bytes": 594390
+          },
+          {
+            "round": 29,
+            "accuracy": 0.928388746803069,
+            "fl_bytes": 615385
+          },
+          {
+            "round": 30,
+            "accuracy": 0.928388746803069,
+            "fl_bytes": 636346
+          },
+          {
+            "round": 31,
+            "accuracy": 0.928388746803069,
+            "fl_bytes": 657318
+          },
+          {
+            "round": 32,
+            "accuracy": 0.928388746803069,
+            "fl_bytes": 678253
+          },
+          {
+            "round": 33,
+            "accuracy": 0.928388746803069,
+            "fl_bytes": 699255
+          },
+          {
+            "round": 34,
+            "accuracy": 0.9526854219948849,
+            "fl_bytes": 720213
+          }
+        ],
+        "bootstrap_shards": false,
+        "reached_target": true
+      },
+      "reduction_x": 3.513605002964401
+    },
+    {
+      "K": 25,
+      "S": 150,
+      "modeA": {
+        "upload_bytes": 6278306,
+        "central_epochs": 50,
+        "final_acc": 0.9987212276214834,
+        "reached_target": true,
+        "bootstrap_shards": true
+      },
+      "modeB": {
+        "rounds": 30,
+        "final_acc": 0.9526854219948849,
+        "fl_bytes": 1592201,
+        "by_endpoint": {
+          "/get_global_model": {
+            "calls": 750,
+            "in": 19950,
+            "out": 730075
+          },
+          "/register": {
+            "calls": 25,
+            "in": 665,
+            "out": 20075
+          },
+          "/submit_params": {
+            "calls": 750,
+            "in": 799935,
+            "out": 21501
+          }
+        },
+        "curve": [
+          {
+            "round": 1,
+            "accuracy": 0.39258312020460356,
+            "fl_bytes": 68975
+          },
+          {
+            "round": 2,
+            "accuracy": 0.008951406649616368,
+            "fl_bytes": 121478
+          },
+          {
+            "round": 3,
+            "accuracy": 0.159846547314578,
+            "fl_bytes": 173796
+          },
+          {
+            "round": 4,
+            "accuracy": 0.5025575447570333,
+            "fl_bytes": 226440
+          },
+          {
+            "round": 5,
+            "accuracy": 0.5025575447570333,
+            "fl_bytes": 279243
+          },
+          {
+            "round": 6,
+            "accuracy": 0.5025575447570333,
+            "fl_bytes": 331981
+          },
+          {
+            "round": 7,
+            "accuracy": 0.6074168797953964,
+            "fl_bytes": 384638
+          },
+          {
+            "round": 8,
+            "accuracy": 0.6074168797953964,
+            "fl_bytes": 437413
+          },
+          {
+            "round": 9,
+            "accuracy": 0.6074168797953964,
+            "fl_bytes": 489938
+          },
+          {
+            "round": 10,
+            "accuracy": 0.6074168797953964,
+            "fl_bytes": 542587
+          },
+          {
+            "round": 11,
+            "accuracy": 0.6074168797953964,
+            "fl_bytes": 595296
+          },
+          {
+            "round": 12,
+            "accuracy": 0.6074168797953964,
+            "fl_bytes": 647875
+          },
+          {
+            "round": 13,
+            "accuracy": 0.6074168797953964,
+            "fl_bytes": 700483
+          },
+          {
+            "round": 14,
+            "accuracy": 0.6074168797953964,
+            "fl_bytes": 752952
+          },
+          {
+            "round": 15,
+            "accuracy": 0.6074168797953964,
+            "fl_bytes": 805491
+          },
+          {
+            "round": 16,
+            "accuracy": 0.6419437340153452,
+            "fl_bytes": 857966
+          },
+          {
+            "round": 17,
+            "accuracy": 0.6419437340153452,
+            "fl_bytes": 910427
+          },
+          {
+            "round": 18,
+            "accuracy": 0.6419437340153452,
+            "fl_bytes": 962705
+          },
+          {
+            "round": 19,
+            "accuracy": 0.6419437340153452,
+            "fl_bytes": 1015185
+          },
+          {
+            "round": 20,
+            "accuracy": 0.6419437340153452,
+            "fl_bytes": 1067593
+          },
+          {
+            "round": 21,
+            "accuracy": 0.6419437340153452,
+            "fl_bytes": 1119969
+          },
+          {
+            "round": 22,
+            "accuracy": 0.9232736572890026,
+            "fl_bytes": 1172343
+          },
+          {
+            "round": 23,
+            "accuracy": 0.9232736572890026,
+            "fl_bytes": 1224864
+          },
+          {
+            "round": 24,
+            "accuracy": 0.928388746803069,
+            "fl_bytes": 1277160
+          },
+          {
+            "round": 25,
+            "accuracy": 0.928388746803069,
+            "fl_bytes": 1329655
+          },
+          {
+            "round": 26,
+            "accuracy": 0.928388746803069,
+            "fl_bytes": 1382188
+          },
+          {
+            "round": 27,
+            "accuracy": 0.928388746803069,
+            "fl_bytes": 1434728
+          },
+          {
+            "round": 28,
+            "accuracy": 0.928388746803069,
+            "fl_bytes": 1487146
+          },
+          {
+            "round": 29,
+            "accuracy": 0.928388746803069,
+            "fl_bytes": 1539607
+          },
+          {
+            "round": 30,
+            "accuracy": 0.9526854219948849,
+            "fl_bytes": 1592201
+          }
+        ],
+        "bootstrap_shards": true,
+        "reached_target": true
+      },
+      "reduction_x": 3.9431616988056155
+    },
+    {
+      "K": 10,
+      "S": 50,
+      "modeA": {
+        "upload_bytes": 837173,
+        "central_epochs": 50,
+        "final_acc": 0.9987212276214834,
+        "reached_target": true,
+        "bootstrap_shards": false
+      },
+      "modeB": {
+        "rounds": 36,
+        "final_acc": 0.9526854219948849,
+        "fl_bytes": 760630,
+        "by_endpoint": {
+          "/get_global_model": {
+            "calls": 360,
+            "in": 9000,
+            "out": 350220
+          },
+          "/register": {
+            "calls": 10,
+            "in": 250,
+            "out": 8030
+          },
+          "/submit_params": {
+            "calls": 360,
+            "in": 382789,
+            "out": 10341
+          }
+        },
+        "curve": [
+          {
+            "round": 1,
+            "accuracy": 0.39258312020460356,
+            "fl_bytes": 27536
+          },
+          {
+            "round": 2,
+            "accuracy": 0.0038363171355498722,
+            "fl_bytes": 48434
+          },
+          {
+            "round": 3,
+            "accuracy": 0.4373401534526854,
+            "fl_bytes": 69336
+          },
+          {
+            "round": 4,
+            "accuracy": 0.5025575447570333,
+            "fl_bytes": 90343
+          },
+          {
+            "round": 5,
+            "accuracy": 0.5025575447570333,
+            "fl_bytes": 111312
+          },
+          {
+            "round": 6,
+            "accuracy": 0.5025575447570333,
+            "fl_bytes": 132356
+          },
+          {
+            "round": 7,
+            "accuracy": 0.6074168797953964,
+            "fl_bytes": 153336
+          },
+          {
+            "round": 8,
+            "accuracy": 0.6074168797953964,
+            "fl_bytes": 174376
+          },
+          {
+            "round": 9,
+            "accuracy": 0.6074168797953964,
+            "fl_bytes": 195330
+          },
+          {
+            "round": 10,
+            "accuracy": 0.6074168797953964,
+            "fl_bytes": 216318
+          },
+          {
+            "round": 11,
+            "accuracy": 0.6074168797953964,
+            "fl_bytes": 237326
+          },
+          {
+            "round": 12,
+            "accuracy": 0.6074168797953964,
+            "fl_bytes": 258364
+          },
+          {
+            "round": 13,
+            "accuracy": 0.6074168797953964,
+            "fl_bytes": 279307
+          },
+          {
+            "round": 14,
+            "accuracy": 0.6074168797953964,
+            "fl_bytes": 300276
+          },
+          {
+            "round": 15,
+            "accuracy": 0.6074168797953964,
+            "fl_bytes": 321190
+          },
+          {
+            "round": 16,
+            "accuracy": 0.6074168797953964,
+            "fl_bytes": 342147
+          },
+          {
+            "round": 17,
+            "accuracy": 0.6074168797953964,
+            "fl_bytes": 363119
+          },
+          {
+            "round": 18,
+            "accuracy": 0.6419437340153452,
+            "fl_bytes": 384021
+          },
+          {
+            "round": 19,
+            "accuracy": 0.6419437340153452,
+            "fl_bytes": 404918
+          },
+          {
+            "round": 20,
+            "accuracy": 0.6419437340153452,
+            "fl_bytes": 425850
+          },
+          {
+            "round": 21,
+            "accuracy": 0.6419437340153452,
+            "fl_bytes": 446803
+          },
+          {
+            "round": 22,
+            "accuracy": 0.6419437340153452,
+            "fl_bytes": 467680
+          },
+          {
+            "round": 23,
+            "accuracy": 0.6419437340153452,
+            "fl_bytes": 488599
+          },
+          {
+            "round": 24,
+            "accuracy": 0.6419437340153452,
+            "fl_bytes": 509497
+          },
+          {
+            "round": 25,
+            "accuracy": 0.9232736572890026,
+            "fl_bytes": 530440
+          },
+          {
+            "round": 26,
+            "accuracy": 0.9232736572890026,
+            "fl_bytes": 551388
+          },
+          {
+            "round": 27,
+            "accuracy": 0.9232736572890026,
+            "fl_bytes": 572325
+          },
+          {
+            "round": 28,
+            "accuracy": 0.928388746803069,
+            "fl_bytes": 593244
+          },
+          {
+            "round": 29,
+            "accuracy": 0.928388746803069,
+            "fl_bytes": 614210
+          },
+          {
+            "round": 30,
+            "accuracy": 0.928388746803069,
+            "fl_bytes": 635175
+          },
+          {
+            "round": 31,
+            "accuracy": 0.928388746803069,
+            "fl_bytes": 656100
+          },
+          {
+            "round": 32,
+            "accuracy": 0.928388746803069,
+            "fl_bytes": 677035
+          },
+          {
+            "round": 33,
+            "accuracy": 0.928388746803069,
+            "fl_bytes": 697905
+          },
+          {
+            "round": 34,
+            "accuracy": 0.928388746803069,
+            "fl_bytes": 718827
+          },
+          {
+            "round": 35,
+            "accuracy": 0.928388746803069,
+            "fl_bytes": 739737
+          },
+          {
+            "round": 36,
+            "accuracy": 0.9526854219948849,
+            "fl_bytes": 760630
+          }
+        ],
+        "bootstrap_shards": false,
+        "reached_target": true
+      },
+      "reduction_x": 1.1006310558352945
+    },
+    {
+      "K": 10,
+      "S": 450,
+      "modeA": {
+        "upload_bytes": 7486531,
+        "central_epochs": 50,
+        "final_acc": 0.9987212276214834,
+        "reached_target": true,
+        "bootstrap_shards": true
+      },
+      "modeB": {
+        "rounds": 31,
+        "final_acc": 0.9526854219948849,
+        "fl_bytes": 657080,
+        "by_endpoint": {
+          "/get_global_model": {
+            "calls": 310,
+            "in": 8060,
+            "out": 301490
+          },
+          "/register": {
+            "calls": 10,
+            "in": 260,
+            "out": 8030
+          },
+          "/submit_params": {
+            "calls": 310,
+            "in": 330349,
+            "out": 8891
+          }
+        },
+        "curve": [
+          {
+            "round": 1,
+            "accuracy": 0.39258312020460356,
+            "fl_bytes": 27560
+          },
+          {
+            "round": 2,
+            "accuracy": 0.005115089514066497,
+            "fl_bytes": 48494
+          },
+          {
+            "round": 3,
+            "accuracy": 0.21483375959079284,
+            "fl_bytes": 69392
+          },
+          {
+            "round": 4,
+            "accuracy": 0.5025575447570333,
+            "fl_bytes": 90392
+          },
+          {
+            "round": 5,
+            "accuracy": 0.5025575447570333,
+            "fl_bytes": 111478
+          },
+          {
+            "round": 6,
+            "accuracy": 0.5025575447570333,
+            "fl_bytes": 132559
+          },
+          {
+            "round": 7,
+            "accuracy": 0.6074168797953964,
+            "fl_bytes": 153642
+          },
+          {
+            "round": 8,
+            "accuracy": 0.6074168797953964,
+            "fl_bytes": 174652
+          },
+          {
+            "round": 9,
+            "accuracy": 0.6074168797953964,
+            "fl_bytes": 195679
+          },
+          {
+            "round": 10,
+            "accuracy": 0.6074168797953964,
+            "fl_bytes": 216697
+          },
+          {
+            "round": 11,
+            "accuracy": 0.6074168797953964,
+            "fl_bytes": 237701
+          },
+          {
+            "round": 12,
+            "accuracy": 0.6074168797953964,
+            "fl_bytes": 258719
+          },
+          {
+            "round": 13,
+            "accuracy": 0.6074168797953964,
+            "fl_bytes": 279695
+          },
+          {
+            "round": 14,
+            "accuracy": 0.6074168797953964,
+            "fl_bytes": 300650
+          },
+          {
+            "round": 15,
+            "accuracy": 0.6074168797953964,
+            "fl_bytes": 321613
+          },
+          {
+            "round": 16,
+            "accuracy": 0.6074168797953964,
+            "fl_bytes": 342602
+          },
+          {
+            "round": 17,
+            "accuracy": 0.6419437340153452,
+            "fl_bytes": 363567
+          },
+          {
+            "round": 18,
+            "accuracy": 0.6419437340153452,
+            "fl_bytes": 384538
+          },
+          {
+            "round": 19,
+            "accuracy": 0.6419437340153452,
+            "fl_bytes": 405520
+          },
+          {
+            "round": 20,
+            "accuracy": 0.6419437340153452,
+            "fl_bytes": 426474
+          },
+          {
+            "round": 21,
+            "accuracy": 0.6419437340153452,
+            "fl_bytes": 447446
+          },
+          {
+            "round": 22,
+            "accuracy": 0.6419437340153452,
+            "fl_bytes": 468395
+          },
+          {
+            "round": 23,
+            "accuracy": 0.9232736572890026,
+            "fl_bytes": 489320
+          },
+          {
+            "round": 24,
+            "accuracy": 0.9232736572890026,
+            "fl_bytes": 510287
+          },
+          {
+            "round": 25,
+            "accuracy": 0.928388746803069,
+            "fl_bytes": 531254
+          },
+          {
+            "round": 26,
+            "accuracy": 0.928388746803069,
+            "fl_bytes": 552182
+          },
+          {
+            "round": 27,
+            "accuracy": 0.928388746803069,
+            "fl_bytes": 573191
+          },
+          {
+            "round": 28,
+            "accuracy": 0.928388746803069,
+            "fl_bytes": 594172
+          },
+          {
+            "round": 29,
+            "accuracy": 0.928388746803069,
+            "fl_bytes": 615145
+          },
+          {
+            "round": 30,
+            "accuracy": 0.928388746803069,
+            "fl_bytes": 636094
+          },
+          {
+            "round": 31,
+            "accuracy": 0.9526854219948849,
+            "fl_bytes": 657080
+          }
+        ],
+        "bootstrap_shards": true,
+        "reached_target": true
+      },
+      "reduction_x": 11.393637000060876
+    }
+  ]
+}

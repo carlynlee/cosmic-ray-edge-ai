@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CosmicPhysicist — Federated Learning Live</title>
+<style>
+  :root { --bg:#0a0e17; --panel:#111827; --line:#1f2a3a; --ink:#e6edf3;
+          --muted:#8b98a9; --accent:#38bdf8; --good:#34d399; --warn:#fbbf24; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink);
+         font:16px/1.4 -apple-system,Segoe UI,Roboto,sans-serif; }
+  .wrap { max-width:1200px; margin:0 auto; padding:24px; }
+  h1 { font-size:1.6rem; margin:0; letter-spacing:.5px; }
+  .sub { color:var(--muted); font-size:.9rem; margin-top:2px; }
+  .kpis { display:flex; gap:16px; margin:20px 0; flex-wrap:wrap; }
+  .kpi { background:var(--panel); border:1px solid var(--line); border-radius:12px;
+         padding:16px 22px; flex:1 1 160px; }
+  .kpi .v { font-size:2.4rem; font-weight:700; line-height:1; }
+  .kpi .l { color:var(--muted); font-size:.8rem; text-transform:uppercase;
+            letter-spacing:1px; margin-top:6px; }
+  .accent { color:var(--accent); } .good { color:var(--good); }
+  .grid2 { display:grid; grid-template-columns:2fr 1fr; gap:16px; }
+  @media (max-width:820px){ .grid2 { grid-template-columns:1fr; } }
+  .panel { background:var(--panel); border:1px solid var(--line); border-radius:12px;
+           padding:18px; }
+  .panel h2 { font-size:.85rem; text-transform:uppercase; letter-spacing:1px;
+              color:var(--muted); margin:0 0 12px; }
+  canvas { width:100%; height:300px; display:block; }
+  .clients { display:flex; flex-wrap:wrap; gap:10px; }
+  .client { background:#0d1420; border:1px solid var(--line); border-radius:10px;
+            padding:10px 12px; min-width:120px; }
+  .client .id { font-weight:600; font-size:.9rem; }
+  .client.sim { opacity:.55; }
+  .simtag { display:inline-block; margin-left:6px; padding:0 6px; border-radius:8px;
+            font-size:.65rem; background:#2a3446; color:#8b98a9; vertical-align:middle; }
+  .client .meta { color:var(--muted); font-size:.75rem; margin-top:4px; }
+  .dot { display:inline-block; width:8px; height:8px; border-radius:50%;
+         background:#3b4657; margin-right:6px; }
+  .dot.on { background:var(--good); box-shadow:0 0 8px var(--good); }
+  .ref .headline { font-size:1.05rem; margin-bottom:10px; }
+  .badge { display:inline-block; padding:2px 10px; border-radius:10px; font-size:.75rem;
+           font-weight:600; }
+  .badge.pass { background:rgba(52,211,153,.15); color:var(--good); }
+  .badge.warn { background:rgba(251,191,36,.15); color:var(--warn); }
+  .refrow { display:flex; justify-content:space-between; padding:6px 0;
+            border-bottom:1px solid var(--line); font-size:.9rem; }
+  .refrow .k { color:var(--muted); }
+  .foot { margin-top:20px; color:var(--muted); font-size:.85rem; text-align:center; }
+  .foot b { color:var(--ink); }
+</style></head>
+<body><div class="wrap">
+  <h1>CosmicPhysicist · <span class="accent">Federated Learning</span> Live</h1>
+  <div class="sub">Phones collaboratively train a cosmic-ray classifier — raw images stay on device, only model weights are shared. Validated by a calibrated CosmicWatch detector.</div>
+
+  <div class="kpis">
+    <div class="kpi"><div class="v accent" id="k-round">0</div><div class="l">FL Round</div></div>
+    <div class="kpi"><div class="v good" id="k-acc">—</div><div class="l">Global Accuracy</div></div>
+    <div class="kpi"><div class="v" id="k-active">0</div><div class="l">Active Phones</div></div>
+    <div class="kpi"><div class="v" id="k-val">0</div><div class="l">Validation Hits</div></div>
+  </div>
+
+  <div class="grid2">
+    <div class="panel">
+      <h2>Global model accuracy per round</h2>
+      <canvas id="chart" width="800" height="300"></canvas>
+    </div>
+    <div>
+      <div class="panel ref">
+        <h2>CosmicWatch referee</h2>
+        <div class="headline" id="ref-headline">Independent physics detector…</div>
+        <div class="refrow"><span class="k">Muon rate</span><span id="ref-flux">—</span></div>
+        <div class="refrow"><span class="k">Barometric β</span><span id="ref-beta">—</span></div>
+        <div class="refrow"><span class="k">Verdict</span><span id="ref-verdict">—</span></div>
+      </div>
+      <div class="panel ref" style="margin-top:16px;">
+        <h2>WAN traffic (measured)</h2>
+        <div class="refrow"><span class="k">Model updates, total</span><span id="wan-fl" class="good">—</span></div>
+        <div class="refrow"><span class="k">Seed shards (one-time)</span><span id="wan-seed">—</span></div>
+        <div class="refrow"><span class="k">Raw data kept on phones</span><span id="wan-device" class="accent">—</span></div>
+        <div class="refrow"><span class="k">Per round / client</span><span id="wan-round">—</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel" style="margin-top:16px;">
+    <h2>Participating phones</h2>
+    <div class="clients" id="clients"></div>
+  </div>
+
+  <div class="foot">Privacy-preserving: <b>raw camera frames never leave the phone</b> — each round shares only a few hundred bytes of model weights.</div>
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+
+async function poll() {
+  try {
+    const s = await (await fetch('/status')).json();
+    $('k-round').textContent = s.round;
+    $('k-acc').textContent = (s.current_accuracy * 100).toFixed(1) + '%';
+    $('k-active').textContent = (s.n_active_real != null)
+      ? s.n_active_real + (s.n_active_sim ? ` (+${s.n_active_sim} sim)` : '')
+      : s.n_active + ' / ' + s.n_clients;
+    $('k-val').textContent = s.val_size.toLocaleString();
+    drawChart(s.accuracy_curve || []);
+    renderClients(s.clients || []);
+    renderWan(s.wan, s.round, s.n_clients);
+  } catch (e) { /* server briefly unreachable — keep last frame */ }
+}
+
+async function pollReferee() {
+  try {
+    const r = await (await fetch('/referee')).json();
+    $('ref-headline').textContent = r.headline || '';
+    $('ref-flux').textContent = r.flux_hz != null ? r.flux_hz.toFixed(3) + ' Hz' : '—';
+    $('ref-beta').textContent = r.beta_pct_per_hpa != null
+      ? r.beta_pct_per_hpa.toFixed(2) + ' %/hPa' : '—';
+    const v = $('ref-verdict');
+    v.textContent = r.verdict || '—';
+    v.className = 'badge ' + (r.verdict === 'PASS' ? 'pass' : 'warn');
+  } catch (e) {}
+}
+
+function renderClients(clients) {
+  const el = $('clients');
+  if (!clients.length) { el.innerHTML = '<span style="color:#8b98a9">Waiting for phones to join…</span>'; return; }
+  el.innerHTML = clients.map(c => `
+    <div class="client${c.sim ? ' sim' : ''}">
+      <div class="id"><span class="dot ${c.active ? 'on' : ''}"></span>${escapeId(c.client_id)}${c.sim ? '<span class="simtag">SIM</span>' : ''}</div>
+      <div class="meta">${c.submits} rounds · ${c.samples} samples</div>
+    </div>`).join('');
+}
+
+function escapeId(s) { return String(s).replace(/[<>&]/g, ''); }
+
+function fmtBytes(n) {
+  if (n == null) return '—';
+  if (n < 1024) return n + ' B';
+  if (n < 1048576) return (n / 1024).toFixed(1) + ' KB';
+  return (n / 1048576).toFixed(2) + ' MB';
+}
+
+function renderWan(w, round, nClients) {
+  if (!w) return;
+  $('wan-fl').textContent = fmtBytes(w.fl_update_bytes);
+  $('wan-seed').textContent = fmtBytes(w.seed_bytes);
+  $('wan-device').textContent = fmtBytes(w.kept_on_device_bytes_est) + ' (est., never sent)';
+  const perRound = (round > 0 && nClients > 0)
+    ? w.fl_update_bytes / round / nClients : null;
+  $('wan-round').textContent = perRound ? fmtBytes(Math.round(perRound)) : '—';
+}
+
+function drawChart(curve) {
+  const cv = $('chart'), ctx = cv.getContext('2d');
+  const W = cv.width, H = cv.height, pad = 36;
+  ctx.clearRect(0, 0, W, H);
+  // gridlines at 0, .5, 1
+  ctx.strokeStyle = '#1f2a3a'; ctx.fillStyle = '#8b98a9'; ctx.font = '12px sans-serif';
+  ctx.lineWidth = 1;
+  [0, 0.5, 1].forEach(f => {
+    const y = H - pad - f * (H - 2 * pad);
+    ctx.beginPath(); ctx.moveTo(pad, y); ctx.lineTo(W - pad, y); ctx.stroke();
+    ctx.fillText((f * 100) + '%', 4, y + 4);
+  });
+  if (curve.length < 2) return;
+  const n = curve.length;
+  const x = i => pad + i / (n - 1) * (W - 2 * pad);
+  const y = a => H - pad - a * (H - 2 * pad);
+  // area
+  ctx.beginPath(); ctx.moveTo(x(0), y(curve[0].accuracy));
+  curve.forEach((p, i) => ctx.lineTo(x(i), y(p.accuracy)));
+  ctx.lineTo(x(n - 1), H - pad); ctx.lineTo(x(0), H - pad); ctx.closePath();
+  ctx.fillStyle = 'rgba(56,189,248,.12)'; ctx.fill();
+  // line
+  ctx.beginPath(); ctx.moveTo(x(0), y(curve[0].accuracy));
+  curve.forEach((p, i) => ctx.lineTo(x(i), y(p.accuracy)));
+  ctx.strokeStyle = '#38bdf8'; ctx.lineWidth = 2.5; ctx.stroke();
+  // latest point
+  const last = curve[n - 1];
+  ctx.beginPath(); ctx.arc(x(n - 1), y(last.accuracy), 5, 0, 7); ctx.fillStyle = '#34d399'; ctx.fill();
+}
+
+poll(); pollReferee();
+setInterval(poll, 1000);
+setInterval(pollReferee, 10000);
+</script>
+</body></html>

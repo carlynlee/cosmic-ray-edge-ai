@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<title>CosmicWatch Phone Detector</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #000; color: #0f0;
+    font-family: 'Courier New', monospace;
+    height: 100vh; display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 20px; user-select: none;
+  }
+  h1 { font-size: 1.1rem; letter-spacing: 2px; margin-bottom: 6px; }
+  #subtitle { font-size: 0.65rem; color: #060; margin-bottom: 20px; letter-spacing: 1px; }
+  #status { font-size: 0.75rem; color: #060; margin-bottom: 4px; min-height: 1.2em; text-align: center; }
+  #warning { font-size: 0.75rem; color: #f80; margin-bottom: 12px; min-height: 1.2em; text-align: center; font-weight: bold; }
+  #big-count { font-size: 5rem; font-weight: bold; color: #0f0; line-height: 1; margin-bottom: 4px; }
+  #count-label { font-size: 0.7rem; color: #060; margin-bottom: 8px; letter-spacing: 1px; }
+  #heartbeat { font-size: 0.65rem; color: #040; margin-bottom: 8px; }
+  #last-event { font-size: 0.7rem; color: #090; min-height: 1.2em; margin-bottom: 20px; text-align: center; }
+  #btn {
+    padding: 16px 40px; font-size: 1rem; font-family: 'Courier New', monospace;
+    background: #000; color: #0f0; border: 2px solid #0f0; border-radius: 4px;
+    cursor: pointer; letter-spacing: 2px; text-transform: uppercase;
+  }
+  #btn.running { border-color: #f00; color: #f00; }
+  #flash { position: fixed; inset: 0; background: #fff; opacity: 0; pointer-events: none; transition: opacity 0.05s; }
+  video, canvas { display: none; }
+  #device-id { font-size: 0.6rem; color: #030; margin-top: 16px; }
+</style>
+</head>
+<body>
+<div id="flash"></div>
+<h1>&#9733; COSMICWATCH</h1>
+<div id="subtitle">PHONE CAMERA DETECTOR</div>
+<div id="status">Cover camera completely. Then press START.</div>
+<div id="warning">&nbsp;</div>
+<div id="big-count">0</div>
+<div id="count-label">DETECTIONS</div>
+<div id="heartbeat">&nbsp;</div>
+<div id="last-event">&nbsp;</div>
+<button id="btn" onclick="toggle()">START</button>
+<video id="video" playsinline autoplay muted></video>
+<canvas id="canvas"></canvas>
+<div id="device-id"></div>
+<div id="fl-status">&nbsp;</div>
+
+<script src="model.js"></script>
+<script src="fl_client.js"></script>
+<script>
+const RECEIVER_URL = "https://credo-phone.nrp-nautilus.io/api/phone";
+const API_TOKEN    = "cosmic-demo-2026";
+const FL_SERVER_URL = "https://credo-fl.nrp-nautilus.io";  // federated-learning coordinator
+let liveHits = [];  // recent local detections, folded into FL training
+
+// Andersen adaptive algorithm parameters
+// Source: github.com/credo-science/credo-cosmic-ray-detector-ios
+const HEAT_ALPHA       = 0.03;  // per-pixel running average factor (~33 frame memory)
+const HIT_FACTOR       = 5;     // pixel must be this × its running average
+const HIT_MIN_TOTAL    = 4;     // min R+G+B to consider (pure noise floor)
+const HIT_SCORE_MIN    = 10000; // min (total-heat)² to report a hit (~total>100 on dark pixel)
+
+// Frame parameters
+const PADDING           = 40;   // ignore border pixels (edge noise + lens vignetting)
+const BRIGHTNESS_LIMIT  = 8;    // max allowed avg brightness (0-255/ch); above = lens not covered
+                                 // CREDO mobile app uses ~13; 8 is stricter for ISP frames
+
+// Cluster + hot-pixel parameters. Real cosmic hits deposit energy across
+// several adjacent pixels (a cluster / short track); isolated single-pixel
+// spikes are thermal/shot noise. A pixel that fires repeatedly at the same spot
+// is a stuck/hot pixel and is masked.
+const HOT_WINDOW        = 60;   // frames over which fires are counted
+const HOT_MIN_FIRES     = 8;    // fires within the window => treat pixel as hot
+const HOT_PRUNE_EVERY   = 300;  // frames between hot-map prunes
+
+let stream = null;
+let imageCapture = null;
+let offscreen = null;
+let offCtx = null;
+let heatMap = null;        // Float32Array — per-pixel running average, lazily initialized
+let hotCounts = new Map(); // pixelIndex -> {c, last} recent-fire counter for hot-pixel masking
+let running = false;
+let hitCount = 0;
+let frameCount = 0;
+let lastHitTime = null;
+let lastPostTime = 0;
+let heartbeatTimer = null;
+let lastPosition = null;   // cached GPS position
+let gpsWatchId = null;
+
+const deviceId = (() => {
+  let id = localStorage.getItem("cosmic_device_id");
+  if (!id) { id = "phone-" + Math.random().toString(36).slice(2, 10); localStorage.setItem("cosmic_device_id", id); }
+  document.getElementById("device-id").textContent = "ID: " + id;
+  return id;
+})();
+
+async function toggle() { running ? stop() : await start(); }
+
+async function start() {
+  setStatus("Requesting camera...");
+  try {
+    stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
+  } catch (e) { setStatus("Camera error: " + e.message); return; }
+
+  if (typeof ImageCapture === 'undefined') {
+    setStatus("ImageCapture API not supported on this browser.");
+    stream.getTracks().forEach(t => t.stop());
+    return;
+  }
+
+  imageCapture = new ImageCapture(stream.getVideoTracks()[0]);
+  running = true;
+  document.getElementById("btn").textContent = "STOP";
+  document.getElementById("btn").classList.add("running");
+  setStatus("Running — camera must be covered");
+  if (navigator.wakeLock) navigator.wakeLock.request("screen").catch(() => {});
+  if (navigator.geolocation) {
+    gpsWatchId = navigator.geolocation.watchPosition(
+      pos => { lastPosition = pos.coords; },
+      () => {},
+      { enableHighAccuracy: true, maximumAge: 30000 }
+    );
+  }
+  heartbeatTimer = setInterval(updateHeartbeat, 1000);
+  startFLLoop();
+  grabLoop();
+}
+
+// Federated-learning loop: join the round, train the shared model locally on
+// seeded hits + this phone's own detections, submit only weights.
+function startFLLoop() {
+  if (!window.CosmicFL) return;  // scripts not loaded — detection still works
+  CosmicFL.startFL({
+    base: FL_SERVER_URL, clientId: deviceId, intervalMs: 2000, seedN: 150,
+    onStatus: updateFLStatus, getLiveHits: () => liveHits.slice(),
+    shouldStop: () => !running,
+  }).catch(() => {});
+}
+
+function updateFLStatus(s) {
+  const el = document.getElementById("fl-status");
+  if (!el) return;
+  if (s.error) { el.textContent = "FL: reconnecting…"; return; }
+  el.textContent = `FL round ${s.round} · local ${(s.localAcc * 100).toFixed(0)}% · ${s.samples} samples`;
+}
+
+function stop() {
+  running = false;
+  clearInterval(heartbeatTimer);
+  if (stream) stream.getTracks().forEach(t => t.stop());
+  stream = null; imageCapture = null; offscreen = null; offCtx = null; heatMap = null;
+  hotCounts = new Map(); liveHits = [];
+  if (gpsWatchId !== null) { navigator.geolocation.clearWatch(gpsWatchId); gpsWatchId = null; }
+  document.getElementById("btn").textContent = "START";
+  document.getElementById("btn").classList.remove("running");
+  setStatus("Stopped. Cover camera completely. Then press START.");
+  setWarning("");
+}
+
+async function grabLoop() {
+  while (running) {
+    try {
+      const bitmap = await imageCapture.grabFrame();
+      if (!offscreen) {
+        offscreen = new OffscreenCanvas(bitmap.width, bitmap.height);
+        offCtx = offscreen.getContext("2d");
+      }
+      offCtx.drawImage(bitmap, 0, 0);
+      const imgData = offCtx.getImageData(0, 0, bitmap.width, bitmap.height);
+      bitmap.close();
+      await processFrame(imgData);
+      frameCount++;
+    } catch (e) {
+      const track = stream && stream.getVideoTracks()[0];
+      if (!track || track.readyState === "ended") {
+        setStatus("Camera reconnecting...");
+        await new Promise(r => setTimeout(r, 2000));
+      }
+    }
+  }
+}
+
+async function processFrame(imgData) {
+  const w = imgData.width;
+  const h = imgData.height;
+  const data = imgData.data;
+  const n = w * h;
+
+  // Initialize heat map on first frame or resolution change
+  if (!heatMap || heatMap.length !== n) {
+    heatMap = new Float32Array(n); // zeros = cold start
+  }
+
+  const rowStart = PADDING, rowEnd = h - PADDING;
+  const colStart = PADDING, colEnd = w - PADDING;
+  const innerPx  = (rowEnd - rowStart) * (colEnd - colStart);
+
+  let sumAll = 0;
+  const fired = [];  // {pi, r, c, total, score} for every above-threshold pixel
+
+  for (let r = rowStart; r < rowEnd; r++) {
+    for (let c = colStart; c < colEnd; c++) {
+      const i  = (r * w + c) * 4;
+      const pi = r * w + c;
+
+      const total = data[i] + data[i+1] + data[i+2]; // R+G+B, 0-765
+      sumAll += total;
+
+      const heat = heatMap[pi];
+
+      // Update per-pixel running average (Andersen heat map)
+      heatMap[pi] = HEAT_ALPHA * total + (1 - HEAT_ALPHA) * heat;
+
+      // Flag every pixel 5× above its own running average (not just the max)
+      if (total > HIT_MIN_TOTAL && total > HIT_FACTOR * heat) {
+        const diff = total - heat;
+        fired.push({ pi, r, c, total, score: diff * diff });
+      }
+    }
+  }
+
+  // Lens-coverage check
+  const avgBrightness = sumAll / (innerPx * 3);  // per channel, 0-255
+  if (avgBrightness > BRIGHTNESS_LIMIT) {
+    setWarning("⚠ LENS NOT COVERED — cover completely");
+    return;
+  }
+  setWarning("");
+
+  // Mask stuck/hot pixels, then group the rest into connected clusters.
+  const active = filterHotPixels(fired);
+  if (active.length === 0) return;
+  const clusters = clusterPixels(active, w);
+
+  // Pick the most energetic cluster (summed score).
+  let best = null;
+  for (const cl of clusters) if (!best || cl.sumScore > best.sumScore) best = cl;
+  if (!best || best.maxScore <= HIT_SCORE_MIN) return;
+
+  const image = await cropHit(best.cr, best.cc, imgData.width, imgData.height);
+  reportHit({
+    brightness: best.maxTotal / 3,   // R+G+B → per channel (0-255)
+    cluster_size: best.size,         // REAL cluster size (was hardcoded 1)
+    elongation: best.elong,          // bbox aspect ratio; tracks are elongated
+    score: best.maxScore,
+    hit_x: best.cc, hit_y: best.cr,
+    frame_width: imgData.width, frame_height: imgData.height,
+    image,
+  });
+}
+
+// Count repeat fires per pixel; a pixel firing >= HOT_MIN_FIRES within a
+// rolling HOT_WINDOW is a stuck/hot pixel and is dropped from clustering.
+function filterHotPixels(fired) {
+  const out = [];
+  for (const f of fired) {
+    let e = hotCounts.get(f.pi);
+    if (!e || (frameCount - e.last) > HOT_WINDOW) e = { c: 0, last: frameCount };
+    e.c++; e.last = frameCount;
+    hotCounts.set(f.pi, e);
+    if (e.c < HOT_MIN_FIRES) out.push(f);
+  }
+  if (frameCount % HOT_PRUNE_EVERY === 0) {
+    for (const [pi, e] of hotCounts) if ((frameCount - e.last) > HOT_WINDOW) hotCounts.delete(pi);
+  }
+  return out;
+}
+
+// 8-connected flood-fill over the flagged pixels -> clusters with size,
+// bounding box (elongation) and centroid.
+function clusterPixels(active, w) {
+  const byPi = new Map(active.map(f => [f.pi, f]));
+  const seen = new Set();
+  const clusters = [];
+  for (const start of active) {
+    if (seen.has(start.pi)) continue;
+    seen.add(start.pi);
+    const stack = [start];
+    let size = 0, sumScore = 0, maxScore = 0, maxTotal = 0;
+    let minR = 1e9, maxR = -1, minC = 1e9, maxC = -1, sumR = 0, sumC = 0;
+    while (stack.length) {
+      const p = stack.pop();
+      size++; sumScore += p.score;
+      if (p.score > maxScore) maxScore = p.score;
+      if (p.total > maxTotal) maxTotal = p.total;
+      if (p.r < minR) minR = p.r; if (p.r > maxR) maxR = p.r;
+      if (p.c < minC) minC = p.c; if (p.c > maxC) maxC = p.c;
+      sumR += p.r; sumC += p.c;
+      for (let dr = -1; dr <= 1; dr++) {
+        for (let dc = -1; dc <= 1; dc++) {
+          if (dr === 0 && dc === 0) continue;
+          const npi = (p.r + dr) * w + (p.c + dc);
+          if (byPi.has(npi) && !seen.has(npi)) { seen.add(npi); stack.push(byPi.get(npi)); }
+        }
+      }
+    }
+    const bh = maxR - minR + 1, bw = maxC - minC + 1;
+    clusters.push({
+      size, sumScore, maxScore, maxTotal,
+      elong: Math.max(bw, bh) / Math.max(1, Math.min(bw, bh)),
+      cr: Math.round(sumR / size), cc: Math.round(sumC / size),
+    });
+  }
+  return clusters;
+}
+
+async function cropHit(row, col, w, h) {
+  const HALF = 30;  // 60×60 crop
+  const x0 = Math.max(0, col - HALF);
+  const y0 = Math.max(0, row - HALF);
+  const x1 = Math.min(w, col + HALF);
+  const y1 = Math.min(h, row + HALF);
+
+  const crop = new OffscreenCanvas(60, 60);
+  const ctx  = crop.getContext("2d");
+  // Scale the crop region to fill 60×60 (handles edge clamping)
+  ctx.drawImage(offscreen, x0, y0, x1 - x0, y1 - y0, 0, 0, 60, 60);
+
+  const blob   = await crop.convertToBlob({ type: "image/png" });
+  const buffer = await blob.arrayBuffer();
+  const bytes  = new Uint8Array(buffer);
+  let binary   = "";
+  for (let i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i]);
+  return btoa(binary);
+}
+
+function reportHit(feat) {
+  hitCount++;
+  lastHitTime = Date.now();
+  document.getElementById("big-count").textContent = hitCount;
+
+  // Fold this real detection into the local FL training set (features only).
+  liveHits.push({ brightness: feat.brightness, cluster_size: feat.cluster_size,
+                  elongation: feat.elongation });
+  if (liveHits.length > 50) liveHits.shift();
+  document.getElementById("last-event").textContent =
+    `cluster: ${feat.cluster_size}px  bright: ${feat.brightness.toFixed(0)}/255  ` +
+    `elong: ${feat.elongation.toFixed(1)}`;
+
+  const flash = document.getElementById("flash");
+  flash.style.opacity = "0.7";
+  setTimeout(() => { flash.style.opacity = "0"; }, 100);
+
+  const now = Date.now();
+  if (now - lastPostTime < 10000) return;  // 1 POST per 10s max
+  lastPostTime = now;
+
+  fetch(RECEIVER_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "Authorization": "Bearer " + API_TOKEN },
+    body: JSON.stringify({
+      brightness: feat.brightness,
+      cluster_size: feat.cluster_size,   // real connected-component size
+      elongation: feat.elongation,       // bbox aspect ratio (track discriminator)
+      score: feat.score,
+      device_id: deviceId,
+      image: feat.image,
+      // CREDO-compatible metadata
+      hit_x: feat.hit_x,
+      hit_y: feat.hit_y,
+      frame_width: feat.frame_width,
+      frame_height: feat.frame_height,
+      latitude:  lastPosition ? lastPosition.latitude  : null,
+      longitude: lastPosition ? lastPosition.longitude : null,
+      altitude:  lastPosition ? lastPosition.altitude  : null,
+      gps_accuracy: lastPosition ? lastPosition.accuracy : null,
+      provider: lastPosition ? "gps" : "none",
+      device_model: navigator.userAgent,
+      timestamp: Date.now(),
+    })
+  }).catch(() => {});
+}
+
+function updateHeartbeat() {
+  let msg = `Scanned ${frameCount.toLocaleString()} frames · ${hitCount} hits`;
+  if (lastHitTime) {
+    const ago = Math.floor((Date.now() - lastHitTime) / 1000);
+    msg += ` · last: ${ago}s ago`;
+  }
+  document.getElementById("heartbeat").textContent = msg;
+}
+
+function setStatus(msg) { document.getElementById("status").textContent = msg; }
+function setWarning(msg) { document.getElementById("warning").textContent = msg || " "; }
+</script>
+</body>
+</html>

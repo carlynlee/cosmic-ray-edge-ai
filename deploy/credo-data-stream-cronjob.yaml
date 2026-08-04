@@ -1,0 +1,354 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: credo-data-stream
+  namespace: cblee-credo
+spec:
+  # Run every 10 minutes
+  schedule: "*/10 * * * *"
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  concurrencyPolicy: Forbid
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels:
+            app: credo-data-stream
+        spec:
+          restartPolicy: OnFailure
+          containers:
+          - name: credo-data-stream
+            image: python:3.11-slim
+            imagePullPolicy: IfNotPresent
+            resources:
+              requests:
+                cpu: "200m"
+                memory: "256Mi"
+              limits:
+                cpu: "240m"
+                memory: "307Mi"
+            env:
+            - name: CREDO_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: credo-token
+                  key: token
+            - name: ES_HOST
+              value: "https://credo-elasticsearch-es-http:9200"
+            - name: ES_USER
+              value: "elastic"
+            - name: ES_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: credo-elasticsearch-es-elastic-user
+                  key: elastic
+            - name: DATA_DIR
+              value: "/workspace/credo-data-stream"
+            command:
+            - /bin/bash
+            - -c
+            - |
+              set -e
+              echo "=== CREDO Data Stream Job Started ==="
+              echo "Timestamp: $(date)"
+              
+              # Install dependencies
+              pip install --quiet requests elasticsearch
+              
+              # Create workspace
+              mkdir -p $DATA_DIR/detections $DATA_DIR/pings
+              
+              # Initialize last_exported files if they don't exist
+              if [ ! -f "$DATA_DIR/last_exported_detection" ]; then
+                # Start from 7 days ago (in milliseconds)
+                echo $(($(date +%s) * 1000 - 7 * 24 * 60 * 60 * 1000)) > $DATA_DIR/last_exported_detection
+              fi
+              if [ ! -f "$DATA_DIR/last_exported_ping" ]; then
+                echo $(($(date +%s) * 1000 - 7 * 24 * 60 * 60 * 1000)) > $DATA_DIR/last_exported_ping
+              fi
+              
+              # Download data-exporter script
+              cat > /tmp/credo-data-exporter.py << 'EXPORTER_EOF'
+              #!/usr/bin/env python3
+              from __future__ import absolute_import, division, print_function, unicode_literals
+              
+              import argparse
+              import errno
+              import os
+              import platform
+              import random
+              import time
+              import requests
+              
+              parser = argparse.ArgumentParser(description="Tool for incremental data export from CREDO")
+              parser.add_argument("--token", "-t", help="Access token", required=True)
+              parser.add_argument("--endpoint", help="API endpoint", default="https://api.credo.science/api/v2")
+              parser.add_argument("--dir", "-d", help="Path to data directory", default="credo-data-export")
+              parser.add_argument("--max-chunk-size", "-m", help="Maximum number of events", type=int, default=1000)
+              parser.add_argument("--data-type", "-k", help="Type of event (ping/detection/all)", default="all")
+              parser.add_argument("--mapping-type", "-l", help="Type of mapping", default="none")
+              
+              args = parser.parse_args()
+              args.endpoint = args.endpoint.rstrip("/")
+              args.dir = args.dir.rstrip("/")
+              
+              def random_sleep(seconds):
+                  time.sleep(seconds + random.random() * seconds)
+              
+              def prepare_workspace():
+                  if not os.path.exists(args.dir):
+                      os.makedirs(args.dir)
+                  if not os.path.exists(args.dir + "/detections"):
+                      os.makedirs(args.dir + "/detections")
+                  if not os.path.exists(args.dir + "/pings"):
+                      os.makedirs(args.dir + "/pings")
+                  if not os.path.exists(args.dir + "/device_id"):
+                      with open(args.dir + "/device_id", "w+") as f:
+                          f.write(os.urandom(16).hex())
+              
+              def get_base_request():
+                  with open(args.dir + "/device_id") as f:
+                      device_id = f.readline()
+                  return {
+                      "device_id": device_id,
+                      "device_type": "credo-data-exporter",
+                      "device_model": platform.system(),
+                      "system_version": platform.release(),
+                      "app_version": 1,
+                  }
+              
+              def get_token():
+                  return args.token
+              
+              def update_data(data_type):
+                  time_since = 0
+                  if os.path.exists(args.dir + "/last_exported_" + data_type):
+                      with open(args.dir + "/last_exported_" + data_type) as f:
+                          time_since = int(f.readline())
+              
+                  j = get_base_request()
+                  j["since"] = time_since
+                  j["until"] = int((time.time() + 3600 * 24) * 1000)
+                  j["limit"] = args.max_chunk_size
+                  j["data_type"] = data_type
+              
+                  r = requests.post(
+                      args.endpoint + "/data_export",
+                      json=j,
+                      headers={"authorization": "Token " + get_token()},
+                  )
+              
+                  if not r.ok:
+                      try:
+                          error_data = r.json()
+                          print(f"Error response: {error_data}")
+                      except (ValueError, requests.exceptions.JSONDecodeError):
+                          print(f"Error: HTTP {r.status_code}")
+                          print(f"Response: {r.text[:200]}")
+                          if r.status_code == 503:
+                              print("⚠️  The CREDO.science API is currently unavailable (Service Unavailable).")
+                              print("   The job will exit and retry on the next scheduled run.")
+                              return
+                      r.raise_for_status()
+              
+                  export_url = r.json()["url"]
+                  print(f"Export URL: {export_url}")
+              
+                  random_sleep(30)
+                  retries = 0
+                  
+                  while True:
+                      r = requests.get(export_url)
+                      if r.status_code == 404:
+                          print(f"Waiting for export (retry {retries})...")
+                          retries += 1
+                          if retries < 10:
+                              random_sleep(30)
+                          elif retries < 25:
+                              random_sleep(300)
+                          else:
+                              print("Export not ready in time")
+                              return
+                      else:
+                          if not r.ok:
+                              try:
+                                  error_data = r.json()
+                                  print(f"Error response: {error_data}")
+                              except (ValueError, requests.exceptions.JSONDecodeError):
+                                  print(f"Error: HTTP {r.status_code}")
+                                  print(f"Response: {r.text[:200]}")
+                                  if r.status_code == 503:
+                                      print("⚠️  The CREDO.science API is currently unavailable (Service Unavailable).")
+                                      print("   The job will exit and retry on the next scheduled run.")
+                                      return
+                              r.raise_for_status()
+                          
+                          # Save data
+                          filename = f"{args.dir}/{data_type}s/{int(time.time())}.json"
+                          with open(filename, "wb") as f:
+                              for chunk in r.iter_content(4096):
+                                  f.write(chunk)
+                          
+                          # Update timestamp
+                          data = r.json()
+                          if data and len(data.get(data_type + "s", [])) > 0:
+                              latest = max(d.get("timestamp", time_since) for d in data.get(data_type + "s", []))
+                              with open(args.dir + "/last_exported_" + data_type, "w") as f:
+                                  f.write(str(latest))
+                              print(f"Exported {len(data.get(data_type + 's', []))} {data_type}s, latest timestamp: {latest}")
+                          else:
+                              print(f"No new {data_type}s")
+                          return
+              
+              if __name__ == "__main__":
+                  prepare_workspace()
+                  if args.data_type in ["detection", "all"]:
+                      update_data("detection")
+                  if args.data_type in ["ping", "all"]:
+                      update_data("ping")
+              EXPORTER_EOF
+              
+              # Download data-processor script
+              cat > /tmp/credo-data-processor.py << 'PROCESSOR_EOF'
+              #!/usr/bin/env python3
+              import argparse
+              import errno
+              import importlib.util
+              import json
+              import os
+              
+              parser = argparse.ArgumentParser(description="Tool for processing CREDO data")
+              parser.add_argument("--dir", "-d", help="Path to data directory", default="credo-data-export")
+              parser.add_argument("--plugin-dir", help="Path to plugins", default="plugins")
+              parser.add_argument("--data-type", "-k", help="Type of event", default="all")
+              parser.add_argument("--delete", action="store_true", help="Delete processed files")
+              
+              args = parser.parse_args()
+              args.dir = args.dir.rstrip("/")
+              args.plugin_dir = args.plugin_dir.rstrip("/")
+              
+              def prepare_workspace():
+                  for f in ["processed_detections", "processed_pings"]:
+                      if not os.path.exists(args.dir + "/" + f):
+                          with open(args.dir + "/" + f, "w+") as _:
+                              pass
+              
+              def get_new_files(data_type):
+                  with open(f"{args.dir}/processed_{data_type}s") as f:
+                      files_old = set(f.read().splitlines(False))
+                  files_current = set(os.listdir(f"{args.dir}/{data_type}s"))
+                  return files_current - files_old
+              
+              def process(events, plugins):
+                  if events.get("detections"):
+                      for p in plugins:
+                          p.process_detections(events["detections"], args.dir)
+                  elif events.get("pings"):
+                      for p in plugins:
+                          p.process_pings(events["pings"], args.dir)
+              
+              if __name__ == "__main__":
+                  prepare_workspace()
+                  
+                  # Load export_to_elasticsearch plugin
+                  plugin_code = '\n'.join([
+                      'from elasticsearch import Elasticsearch',
+                      'from elasticsearch.helpers import bulk',
+                      'import os',
+                      '',
+                      'DETECTION_INDEX_NAME = "credo-detections"',
+                      'PING_INDEX_NAME = "credo-pings"',
+                      '',
+                      'ES_HOST = os.getenv("ES_HOST", "https://localhost:9200")',
+                      'ES_USER = os.getenv("ES_USER", "elastic")',
+                      'ES_PASS = os.getenv("ES_PASS")',
+                      '',
+                      'es = Elasticsearch([ES_HOST], basic_auth=(ES_USER, ES_PASS), verify_certs=False, ssl_show_warn=False, sniff_on_start=False)',
+                      '',
+                      'def transform_detections(detections):',
+                      '    for d in detections:',
+                      '        if d.get("latitude"):',
+                      '            d["location"] = {"lat": d["latitude"], "lon": d["longitude"]}',
+                      '            del d["latitude"]',
+                      '            del d["longitude"]',
+                      '        yield d',
+                      '',
+                      'def process_detections(detections, data_dir):',
+                      '    es.indices.create(DETECTION_INDEX_NAME, body={',
+                      '        "settings": {"index": {"number_of_shards": 12, "number_of_replicas": 0}},',
+                      '        "mappings": {',
+                      '            "properties": {',
+                      '                "accuracy": {"type": "float"}, "altitude": {"type": "float"},',
+                      '                "device_id": {"type": "keyword"}, "frame_content": {"type": "binary"},',
+                      '                "height": {"type": "long"}, "id": {"type": "long"},',
+                      '                "location": {"type": "geo_point"}, "provider": {"type": "keyword"},',
+                      '                "source": {"type": "keyword"}, "team_id": {"type": "keyword"},',
+                      '                "time_received": {"type": "date"}, "timestamp": {"type": "date"},',
+                      '                "user_id": {"type": "keyword"}, "visible": {"type": "boolean"},',
+                      '                "width": {"type": "long"}, "x": {"type": "long"}, "y": {"type": "long"},',
+                      '            }',
+                      '        }',
+                      '    }, ignore=400)',
+                      '    bulk(es, transform_detections(detections), index=DETECTION_INDEX_NAME, raise_on_exception=False)',
+                      '',
+                      'def process_pings(pings, data_dir):',
+                      '    es.indices.create(PING_INDEX_NAME, body={',
+                      '        "settings": {"index": {"number_of_shards": 12, "number_of_replicas": 0}},',
+                      '        "mappings": {',
+                      '            "properties": {',
+                      '                "delta_time": {"type": "long"}, "device_id": {"type": "keyword"},',
+                      '                "id": {"type": "long"}, "on_time": {"type": "long"},',
+                      '                "time_received": {"type": "date"}, "timestamp": {"type": "date"},',
+                      '                "user_id": {"type": "keyword"},',
+                      '            }',
+                      '        }',
+                      '    }, ignore=400)',
+                      '    bulk(es, pings, index=PING_INDEX_NAME, raise_on_exception=False)',
+                  ])
+                  
+                  import sys
+                  import types
+                  plugin = types.ModuleType("export_to_elasticsearch")
+                  exec(plugin_code, plugin.__dict__)
+                  plugins = [plugin]
+                  
+                  for data_type in (["detection", "ping"] if args.data_type == "all" else [args.data_type]):
+                      for file in get_new_files(data_type):
+                          filepath = f"{args.dir}/{data_type}s/{file}"
+                          with open(filepath) as f:
+                              events = json.load(f)
+                          process(events, plugins)
+                          with open(f"{args.dir}/processed_{data_type}s", "a") as f:
+                              f.write(file + "\n")
+                          if args.delete:
+                              os.remove(filepath)
+                          print(f"Processed {filepath}")
+              
+              PROCESSOR_EOF
+              
+              chmod +x /tmp/credo-data-exporter.py /tmp/credo-data-processor.py
+              
+              # Run exporter
+              echo "=== Fetching data from CREDO.science ==="
+              python3 /tmp/credo-data-exporter.py \
+                --token "$CREDO_TOKEN" \
+                --dir "$DATA_DIR" \
+                --max-chunk-size 1000 \
+                --data-type all \
+                --mapping-type none
+              
+              # Run processor
+              echo "=== Processing and indexing to Elasticsearch ==="
+              python3 /tmp/credo-data-processor.py \
+                --dir "$DATA_DIR" \
+                --data-type all
+              
+              echo "=== Job completed successfully ==="
+            volumeMounts:
+            - name: data-volume
+              mountPath: /workspace
+          volumes:
+          - name: data-volume
+            emptyDir: {}
+

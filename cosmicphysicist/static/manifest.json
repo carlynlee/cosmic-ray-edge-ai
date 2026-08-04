@@ -1,0 +1,9 @@
+{
+  "name": "CosmicPhysicist",
+  "short_name": "CosmicPhysicist",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#07071a",
+  "theme_color": "#07071a",
+  "icons": []
+}
